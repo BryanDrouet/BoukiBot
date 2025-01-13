@@ -2,6 +2,9 @@
 
 BoukiBot est un bot économique Discord conçu pour le serveur communautaire Boukistan. Ce projet s'appuie sur le code original de Kendrik et a été adapté pour répondre aux besoins spécifiques du serveur.
 
+## Commandes
+- Liste complète des commandes : https://github.com/BryanDrouet/BoukiBot.wiki.git
+
 ## Crédit
 - Code original : [UnbelievaBoat-Python-Bot](https://github.com/NoNameSpecified/UnbelievaBoat-Python-Bot) par Kendrik (2021).
 - Adaptation et améliorations : Bryan Drouet (2025).
