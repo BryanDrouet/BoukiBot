@@ -16,9 +16,7 @@ Ce projet est sous licence **Creative Commons Attribution 4.0 International (CC 
 **Conditions :**
 - Attribution : Vous devez créditer l’auteur (Bryan Drouet) de manière appropriée, fournir un lien vers la licence et indiquer si des modifications ont été effectuées.
 
-Pour consulter les termes complets de la licence : [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-
-[Pour plus d'informations sur la licence cliquez ici.](https://github.com/BryanDrouet/BoukiBot/blob/main/licence)
+Pour consulter les termes complets de la licence : [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) et [licence](https://github.com/BryanDrouet/BoukiBot/blob/main/licence).
 
 ---
 
