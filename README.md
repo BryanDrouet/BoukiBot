@@ -21,4 +21,5 @@ Pour consulter les termes complets de la licence : [CC BY 4.0](https://creativec
 
 ---
 
-© 2025 Bryan Drouet. Merci de me créditer si vous utilisez ou modifiez BoukiBot. Je vous en remercie d'avance.
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+Copyright © 2025 Bryan Drouet
