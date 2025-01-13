@@ -2788,7 +2788,7 @@ async def on_message(message):
 		await channel.send(embed=embed)
 		print(f"Début de la maintenance.")
 		
-		channel = bot.get_channel(1317424700124561461)
+		channel = bot.get_channel(log_channel)
 		await channel.send("Message posté")
 	
 	
@@ -2802,7 +2802,7 @@ async def on_message(message):
 		await channel.send(embed=embed)
 		print(f"Fin de la maintenance.")
 		
-		channel = bot.get_channel(1317424700124561461)
+		channel = bot.get_channel(log_channel)
 		await channel.send("Message posté")
 		
 	elif command in ["annonce"]:
@@ -2817,7 +2817,7 @@ async def on_message(message):
 		await channel.send(embed=embed)
 		print(f"Annonce de la maintenance.")
 		
-		channel = bot.get_channel(1317424700124561461)
+		channel = bot.get_channel(log_channel)
 		await channel.send("Message posté")
 		
 	elif command in ["post"]:
@@ -2832,7 +2832,7 @@ async def on_message(message):
 		
 		print(f"Post posté.")
 		
-		channel = bot.get_channel(1317424700124561461)
+		channel = bot.get_channel(log_channel)
 		await channel.send("Message posté")
 	
 	await bot.process_commands(message)
