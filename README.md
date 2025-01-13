@@ -18,6 +18,11 @@ Ce projet est sous licence **Creative Commons Attribution 4.0 International (CC 
 
 Pour consulter les termes complets de la licence : [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) et [licence](https://github.com/BryanDrouet/BoukiBot/blob/main/licence).
 
+## A modifier
+
+- `main.py` - Lignes 6 à 11, 21 & 265 (Nom des rôles)
+- `database\__init__.py` - Lignes 8, 9 & 20
+
 ---
 
 Creative Commons Attribution 4.0 International (CC BY 4.0)
