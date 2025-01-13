@@ -135,7 +135,7 @@ async def on_ready():
     activity = discord.Activity(
         name="Gère l'économie du serveur",
         type=discord.ActivityType.playing,  # "Playing" donne un effet similaire
-        state="Hébergé par Bryan et traduit par Leudemm.",  # État affiché
+        state="Créer par Bryan.",  # État affiché
         details="Boukistan - RP communautaire"  # Détails supplémentaires
     )
 
