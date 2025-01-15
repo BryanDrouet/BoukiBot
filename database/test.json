@@ -1202,7 +1202,7 @@
         },
         {
             "name": "rob",
-            "delay": "480",
+            "delay": 480,
             "proba": 50,
             "min_gain_amount_percentage": 30,
             "max_gain_amount_percentage": 70,
