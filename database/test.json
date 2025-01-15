@@ -1,1 +1,1873 @@
 
+{
+    "userdata": [
+        {
+            "user_id": 805488965854429194,
+            "cash": 0.0,
+            "bank": 701228.0,
+            "items": [
+                [
+                    "bbih",
+                    1
+                ],
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2025-01-14 17:52:35.246482",
+            "last_work": "2025-01-14 17:52:27.058481",
+            "last_crime": "2025-01-14 17:52:32.792720",
+            "last_rob": "2025-01-14 17:53:43.739557",
+            "last_withdraw_date": "2025-01-14",
+            "daily_withdraw_total": 60000
+        },
+        {
+            "user_id": 1260985595233042444,
+            "cash": 46422.0,
+            "bank": 126333.0,
+            "items": [
+                [
+                    "bbih",
+                    1
+                ],
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2025-01-09 19:05:07.389980",
+            "last_work": "2025-01-09 20:56:40.014494",
+            "last_crime": "2025-01-09 19:05:01.354754",
+            "last_rob": "2025-01-09 19:05:33.886447",
+            "last_withdraw_date": "2025-01-06",
+            "daily_withdraw_total": 101060.0
+        },
+        {
+            "user_id": 1232738443830759447,
+            "cash": 0.0,
+            "bank": 1441361.0,
+            "items": [
+                [
+                    "bbih",
+                    1
+                ],
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2025-01-15 07:29:37.639810",
+            "last_work": "2025-01-15 09:02:22.722493",
+            "last_crime": "2025-01-15 07:29:39.918551",
+            "last_rob": "2025-01-15 09:49:19.684269",
+            "last_withdraw_date": "2025-01-12",
+            "daily_withdraw_total": 203
+        },
+        {
+            "user_id": 1072941929228161064,
+            "cash": 0,
+            "bank": 255184,
+            "items": [
+                [
+                    "bbih",
+                    1
+                ],
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-04 00:35:23.482979",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last_withdraw_date": "2025-01-03",
+            "daily_withdraw_total": 50000,
+            "last_adventure": "2025-01-03 23:06:11.893166"
+        },
+        {
+            "user_id": 1095377033170784356,
+            "cash": 13547.0,
+            "bank": 0.0,
+            "items": [
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2025-01-14 17:37:30.111709",
+            "last_work": "2025-01-14 17:35:45.964047",
+            "last_crime": "2025-01-14 17:37:23.365931",
+            "last_rob": "2025-01-09 22:13:56.206906",
+            "last_withdraw_date": "2025-01-14",
+            "daily_withdraw_total": 93429.0
+        },
+        {
+            "user_id": 769181665234386944,
+            "cash": 0.0,
+            "bank": 291579.0,
+            "items": [
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2025-01-15 09:59:17.567394",
+            "last_work": "2025-01-15 09:59:10.991164",
+            "last_crime": "2025-01-15 09:59:20.991923",
+            "last_rob": "2025-01-15 10:00:46.283974",
+            "last_withdraw_date": "2025-01-15",
+            "daily_withdraw_total": 150000
+        },
+        {
+            "user_id": 939927568533057586,
+            "cash": 0.0,
+            "bank": 1335466.0,
+            "items": [
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2025-01-14 22:13:28.718096",
+            "last_work": "2025-01-15 10:03:19.684604",
+            "last_crime": "2025-01-14 17:51:43.685727",
+            "last_rob": "2025-01-14 22:15:12.828866",
+            "last_withdraw_date": "2025-01-14",
+            "daily_withdraw_total": 77000
+        },
+        {
+            "user_id": 1002567936252313690,
+            "cash": 0.0,
+            "bank": 44476.0,
+            "items": [
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2025-01-14 19:18:04.884978",
+            "last_work": "2025-01-14 21:27:43.157253",
+            "last_crime": "2025-01-14 19:17:55.458638",
+            "last_rob": "none",
+            "last_withdraw_date": "2025-01-13",
+            "daily_withdraw_total": 150000
+        },
+        {
+            "user_id": 1140556277634834523,
+            "cash": 1128.0,
+            "bank": 56800,
+            "items": [
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2024-12-28 18:39:22.276955",
+            "last_crime": "none",
+            "last_rob": "none"
+        },
+        {
+            "user_id": 1146539495643156660,
+            "cash": 0,
+            "bank": 88198,
+            "items": [
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2025-01-12 14:40:02.494524",
+            "last_work": "2025-01-08 17:51:28.531911",
+            "last_crime": "2025-01-12 14:39:37.722459",
+            "last_rob": "none"
+        },
+        {
+            "user_id": 710768308579860541,
+            "cash": 1347.0,
+            "bank": 368391.0,
+            "items": [
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2025-01-09 06:34:23.693827",
+            "last_work": "2025-01-09 06:34:19.767568",
+            "last_crime": "2025-01-09 06:34:29.662481",
+            "last_rob": "none",
+            "last_withdraw_date": "2025-01-03",
+            "daily_withdraw_total": 95059.0
+        },
+        {
+            "user_id": 1134093095860977707,
+            "cash": 2123.0,
+            "bank": 66770,
+            "items": [
+                [
+                    "chalet",
+                    2
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-03 22:25:05.073891",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last_withdraw_date": "2024-12-29",
+            "daily_withdraw_total": 50000
+        },
+        {
+            "user_id": 1133394413331161208,
+            "cash": 0.0,
+            "bank": 129823.0,
+            "items": [
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-15 07:22:57.947867",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last_withdraw_date": "2024-12-28",
+            "daily_withdraw_total": 1000,
+            "last_adventure": "2025-01-15 07:23:00.385703"
+        },
+        {
+            "user_id": 1298763413350256722,
+            "cash": 0,
+            "bank": 400,
+            "items": [],
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "none",
+            "last_crime": "none",
+            "last_rob": "none"
+        },
+        {
+            "user_id": 1071711810207617064,
+            "cash": 0,
+            "bank": 22349,
+            "items": [],
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2024-12-29 13:58:01.086462",
+            "last_crime": "none",
+            "last_rob": "none"
+        },
+        {
+            "user_id": 943497042163011634,
+            "cash": 0,
+            "bank": 1100,
+            "items": [],
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "none",
+            "last_crime": "none",
+            "last_rob": "none"
+        },
+        {
+            "user_id": 1037100752897839214,
+            "cash": 0,
+            "bank": 1200,
+            "items": [],
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "none",
+            "last_crime": "none",
+            "last_rob": "none"
+        },
+        {
+            "user_id": 1287020715962273904,
+            "cash": 1695.0,
+            "bank": 576885.0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-15 08:59:18.949525",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last_adventure": "2025-01-14 08:16:24.186569"
+        },
+        {
+            "user_id": 355441747809140738,
+            "cash": 28968.0,
+            "bank": 477390.0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "2025-01-13 15:22:15.931100",
+            "last_work": "2025-01-13 22:17:32.013375",
+            "last_crime": "2025-01-13 15:22:11.893512",
+            "last_rob": "2025-01-13 22:16:49.860914",
+            "last_withdraw_date": "2024-12-28",
+            "daily_withdraw_total": 40000
+        },
+        {
+            "user_id": 714383240454078485,
+            "cash": 0,
+            "bank": 4051,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2024-12-27 12:03:31.944144",
+            "last_crime": "none",
+            "last_rob": "none"
+        },
+        {
+            "user_id": 1322216984892407828,
+            "cash": 5000.0,
+            "bank": 1432562.0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "2025-01-08 20:08:07.102225",
+            "last_work": "2025-01-08 20:08:04.630414",
+            "last_crime": "2025-01-08 20:08:10.464994",
+            "last_rob": "2025-01-03 12:48:50.827032",
+            "last_withdraw_date": "2024-12-29",
+            "daily_withdraw_total": 10998
+        },
+        {
+            "user_id": 1091391553982959687,
+            "cash": 332280.0,
+            "bank": 1452000.0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-13 19:56:32.713789",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last_withdraw_date": "2024-12-29",
+            "daily_withdraw_total": 422
+        },
+        {
+            "user_id": 598076783186935808,
+            "cash": 0.0,
+            "bank": 837189.0,
+            "items": [
+                [
+                    "bbih",
+                    1
+                ],
+                [
+                    "chalet",
+                    1
+                ],
+                [
+                    "bucheno\u00ebl",
+                    2
+                ],
+                [
+                    "sapinno\u00ebl",
+                    1
+                ],
+                [
+                    "etoileno\u00ebl",
+                    1
+                ],
+                [
+                    "couronno\u00ebl",
+                    2
+                ],
+                [
+                    "BonNeige",
+                    3
+                ],
+                [
+                    "painepice",
+                    4
+                ],
+                [
+                    "boules",
+                    5
+                ],
+                [
+                    "flocons",
+                    5
+                ],
+                [
+                    "bonnet",
+                    1
+                ]
+            ],
+            "used_items": "none",
+            "last_slut": "2024-12-28 17:49:50.500953",
+            "last_work": "2025-01-15 10:04:55.671815",
+            "last_crime": "2024-12-30 00:41:54.421593",
+            "last_rob": "none",
+            "last_withdraw_date": "2025-01-15",
+            "daily_withdraw_total": 12181,
+            "last_adventure": "2025-01-15 07:37:59.638856"
+        },
+        {
+            "user_id": 1301912028981493760,
+            "cash": 1587.0,
+            "bank": 2000,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2024-12-28 18:33:41.017408",
+            "last_crime": "none",
+            "last_rob": "none"
+        },
+        {
+            "user_id": 1262449168648241192,
+            "cash": 0,
+            "bank": 0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "none",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none"
+        },
+        {
+            "user_id": 1284648869027778642,
+            "cash": 2415.0,
+            "bank": 0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-03 19:39:04.161377",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none",
+            "last_withdraw_date": "2025-01-03",
+            "daily_withdraw_total": 5598
+        },
+        {
+            "user_id": 1264636714756870210,
+            "cash": 0,
+            "bank": 0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "none",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none"
+        },
+        {
+            "user_id": 1318161613202653194,
+            "cash": 0,
+            "bank": 56065,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "none",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none"
+        },
+        {
+            "user_id": 976125753336922142,
+            "cash": 2408.0,
+            "bank": 243053.0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-14 10:49:10.615018",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none",
+            "last_withdraw_date": "2025-01-10",
+            "daily_withdraw_total": 6000
+        },
+        {
+            "user_id": 1323731356030861394,
+            "cash": 0,
+            "bank": 6866,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-05 20:52:49.734809",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none",
+            "last_adventure": "2025-01-05 20:53:08.848640"
+        },
+        {
+            "user_id": 1325388496268951592,
+            "cash": 0,
+            "bank": 41924,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-09 06:57:58.930790",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none",
+            "last_adventure": "2025-01-09 06:58:02.788902"
+        },
+        {
+            "user_id": 1306217018399133780,
+            "cash": 0,
+            "bank": 5526,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-08 12:14:13.953420",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none"
+        },
+        {
+            "user_id": 955502067655512084,
+            "cash": 0,
+            "bank": 5319,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-08 15:57:07.144634",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none"
+        },
+        {
+            "user_id": 1327313926861619211,
+            "cash": 0,
+            "bank": 14781,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-13 20:17:23.088052",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none"
+        },
+        {
+            "user_id": 1203004363459526666,
+            "cash": 0,
+            "bank": 0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "none",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none"
+        },
+        {
+            "user_id": 1238396627140608020,
+            "cash": 1294.0,
+            "bank": 5835.0,
+            "items": "none",
+            "used_items": "none",
+            "last_slut": "none",
+            "last_work": "2025-01-14 17:08:34.192305",
+            "last_crime": "none",
+            "last_rob": "none",
+            "last-adventure": "none",
+            "last_adventure": "2025-01-14 17:50:26.045804"
+        }
+    ],
+    "variables": [
+        {
+            "name": "slut",
+            "delay": 480,
+            "min_revenue": 5000,
+            "max_revenue": 8000,
+            "proba": 75,
+            "win_phrases": [
+                "Vous avez fait un show impressionnant et gagne",
+                "Ton pere t'aime tellement qu'il te donne",
+                "Vous avez danse devant un public et obtenu",
+                "Un riche spectateur vous donne pour votre performance",
+                "Vous avez enchante la foule et gagne",
+                "Vous avez vendu des services et recolte",
+                "Vous avez organise un evenement reussi et obtenu",
+                "Un admirateur secret vous offre",
+                "Vous avez charme votre public et gagne",
+                "Un fan enthousiaste vous recompense avec",
+                "Votre spectacle attire de nombreux spectateurs et vous obtenez",
+                "Vous avez realise un defi hilarant et gagne",
+                "Vous avez improvise une performance et recolte",
+                "Une video virale de vous rapporte",
+                "Vous avez gagne un concours local et remporte",
+                "Un etranger genereux vous donne pour vos talents",
+                "Vous avez participe a un jeu de role et gagne",
+                "Votre costume impressionne tout le monde et vous recevez",
+                "Vous avez realise un tour spectaculaire et gagne",
+                "Un fan comble vous offre en cadeau",
+                "Vous avez organise un spectacle memorable et empoche",
+                "Une foule enthousiaste vous recompense avec",
+                "Un sponsor apprecie votre performance et vous offre",
+                "Vous avez donne un spectacle prive et obtenu",
+                "Vous avez fait rire tout le monde et gagne",
+                "Une emission de divertissement vous paie",
+                "Un groupe de fans vous felicite avec",
+                "Vous avez participe a un evenement special et recolte",
+                "Votre charisme rapporte",
+                "Une demonstration publique de vos talents vous donne"
+            ],
+            "lose_phrases": [
+                "Vous avez eu une amende, vous payez",
+                "Votre oncle n'a pas aime la rencontre. Vous payez",
+                "Vous avez decu le public, vous payez",
+                "Un spectateur furieux vous fait perdre",
+                "Une erreur couteuse vous fait payer",
+                "Vous avez casse un accessoire et devez payer",
+                "Une reclamation vous oblige a payer",
+                "Un malentendu vous coute",
+                "Un membre du public exige un remboursement, vous payez",
+                "Vous avez ete accuse d'avoir exagere, vous perdez",
+                "Un scandale vous fait perdre",
+                "Un agent de securite vous inflige une amende, vous payez",
+                "Une mauvaise prestation vous fait perdre",
+                "Un probleme technique vous coute",
+                "Un incident embarrassant vous oblige a payer",
+                "Vous avez oublie une etape importante et perdez",
+                "Un adversaire vous surpasse, vous perdez",
+                "Une tentative de seduction echoue et vous perdez",
+                "Une plainte officielle vous fait payer",
+                "Votre public est insatisfait, vous perdez",
+                "Une mauvaise blague vous coute",
+                "Un controle surprise vous fait payer",
+                "Vous avez enfreint une regle locale, vous perdez",
+                "Une distraction vous fait perdre",
+                "Un concurrent vous eclipse, vous payez",
+                "Vous avez sous-estime votre audience et perdez",
+                "Une critique negative vous fait payer",
+                "Un defaut dans votre equipement vous coute",
+                "Un contrat mal interprete vous fait payer",
+                "Une meprise publique vous oblige a perdre"
+            ],
+            "min_lose_amount_percentage": 2,
+            "max_lose_amount_percentage": 2
+        },
+        {
+            "name": "crime",
+            "delay": 480,
+            "min_revenue": 1000,
+            "max_revenue": 10000,
+            "proba": 75,
+            "win_phrases": [
+                "Vous avez commis un crime et obtenu",
+                "Vous avez vole une banque et obtenu",
+                "Vous avez cambriole une bijouterie et gagne",
+                "Vous avez pirate un compte bancaire et recupere",
+                "Vous avez braque un camion blinde et obtenu",
+                "Vous avez fait un casse dans un musee et ramene",
+                "Vous avez extorque une cible influente et obtenu",
+                "Vous avez detourne un camion de marchandises et recupere",
+                "Vous avez contrefait des billets et obtenu",
+                "Vous avez vole des informations precieuses et vendu pour",
+                "Vous avez orchestre une fraude et empoche",
+                "Vous avez infiltre une organisation criminelle et vole",
+                "Vous avez mis en place un racket et obtenu",
+                "Vous avez derobe des oeuvres d'art rares et vendu pour",
+                "Vous avez vole des voitures de luxe et obtenu",
+                "Vous avez sabote un rival et obtenu",
+                "Vous avez pris en otage un riche homme d'affaires et obtenu",
+                "Vous avez fait une escroquerie et gagne",
+                "Vous avez detourne un yacht et obtenu",
+                "Vous avez organise un braquage spectaculaire et emporte",
+                "Vous avez subtilise une cargaison d'or et gagne",
+                "Vous avez manipule le marche et obtenu",
+                "Vous avez hacke un systeme de securite et trouve",
+                "Vous avez vole des diamants lors d'un gala et recupere",
+                "Vous avez trafique des donnees et gagne",
+                "Vous avez monte une operation illegale et gagne",
+                "Vous avez corrompu des fonctionnaires et obtenu",
+                "Vous avez reussi une fraude fiscale et empoche",
+                "Vous avez mis la main sur une mallette d'argent et recupere",
+                "Vous avez joue un double jeu et obtenu"
+            ],
+            "lose_phrases": [
+                "Vous avez eu une amende, vous payez",
+                "MacGyver vous trouve, vous payez",
+                "Vous avez ete capture par la police, vous payez",
+                "Votre plan a echoue et vous perdez",
+                "Un rival vous denonce, vous payez",
+                "Votre complice vous trahit, vous perdez",
+                "Vous declenchez une alarme et payez",
+                "Un garde vous attrape sur le fait, vous perdez",
+                "Un piege etait tendu et vous payez",
+                "Un passant courageux vous stoppe et vous perdez",
+                "La police gele vos comptes, vous perdez",
+                "Une preuve vous incrimine, vous payez",
+                "Vous oubliez de securiser votre fuite et perdez",
+                "Un temoin vous reconnait, vous payez",
+                "Une erreur dans votre plan vous coute",
+                "Votre cible s'est defendue, vous perdez",
+                "Votre vehicule tombe en panne, vous perdez",
+                "Vous declenchez une embuscade et payez",
+                "Un hacker rival expose vos actions, vous perdez",
+                "Un detective decouvre vos traces, vous payez",
+                "Votre complicite est revelee, vous perdez",
+                "Une poursuite se termine mal, vous perdez",
+                "Une camera vous filme, vous payez",
+                "Vous avez ete identifie par un temoin, vous perdez",
+                "Votre cible vous trompe, vous perdez",
+                "Un accident fait echouer votre plan, vous payez",
+                "Un garde du corps vous neutralise, vous perdez",
+                "Votre faux alibi ne tient pas, vous perdez",
+                "Un coup monte vous piege, vous payez",
+                "La cible se revele etre un agent infiltre, vous perdez"
+            ],
+            "min_lose_amount_percentage": 2,
+            "max_lose_amount_percentage": 2
+        },
+        {
+            "name": "work",
+            "delay": 60,
+            "min_revenue": 3000,
+            "max_revenue": 5000,
+            "win_phrases": [
+                "Vous avez travaille chez SubWay et vous avez eu",
+                "Vous avez aide quelqu'un a faire ses devoirs et vous avez obtenu",
+                "Vous avez repare une voiture et vous avez gagne",
+                "Vous avez tondu une pelouse et vous avez obtenu",
+                "Vous avez garde des enfants pour une soiree et vous avez recu",
+                "Vous avez vendu des boissons lors d'un evenement et vous avez gagne",
+                "Vous avez travaille comme livreur et vous avez obtenu",
+                "Vous avez realise un dessin pour un client et vous avez gagne",
+                "Vous avez ecrit un article pour un blog et vous avez obtenu",
+                "Vous avez aide a demenager un ami et vous avez recu",
+                "Vous avez fait du benevolat et vous avez gagne un pourboire de",
+                "Vous avez recupere des bouteilles consignees et vous avez obtenu",
+                "Vous avez participe a une chasse au tresor et vous avez remporte",
+                "Vous avez gagne a une tombola et vous avez recu",
+                "Vous avez aide un voisin a reparer sa cloture et vous avez gagne",
+                "Vous avez organise une vente de garage et vous avez obtenu",
+                "Vous avez vendu des cookies faits maison et vous avez gagne",
+                "Vous avez nettoye une maison et vous avez recu",
+                "Vous avez travaille comme DJ a une fete et vous avez gagne",
+                "Vous avez donne des cours particuliers et vous avez obtenu",
+                "Vous avez gagne une partie de poker avec vos amis et vous avez obtenu",
+                "Vous avez ramasse des dechets pour une recompense ecologique et vous avez gagne",
+                "Vous avez servi des glaces dans un parc et vous avez obtenu",
+                "Vous avez peint une maison et vous avez gagne",
+                "Vous avez repare un velo pour quelqu'un et vous avez recu",
+                "Vous avez joue dans un groupe pour une soiree et vous avez obtenu",
+                "Vous avez aide quelqu'un a installer des meubles et vous avez gagne",
+                "Vous avez vendu des objets sur un marche aux puces et vous avez obtenu",
+                "Vous avez travaille comme figurant dans un film et vous avez gagne",
+                "Vous avez fait un trajet en covoiturage et vous avez recu",
+                "Vous avez recolte des fruits dans une ferme et vous avez obtenu",
+                "Vous avez trouve un objet rare et vous avez l'avez vendu pour"
+            ]
+        },
+        {
+            "name": "rob",
+            "delay": "480",
+            "proba": 50,
+            "min_gain_amount_percentage": 30,
+            "max_gain_amount_percentage": 70,
+            "min_lose_amount_percentage": 3,
+            "max_lose_amount_percentage": 3,
+            "win_phrases": [
+                "Vous avez vole et vous avez obtenu",
+                "Vous avez cambriole une maison et vous avez pris",
+                "Vous avez derobe un portefeuille et vous avez obtenu",
+                "Vous avez infiltre une banque et vous avez reussi a obtenir",
+                "Vous avez vole un velo et vous lavez vendu pour",
+                "Vous avez arrache un sac a main et vous avez recuperer",
+                "Vous avez braque une epicerie et vous avez obtenu",
+                "Vous avez subtilise des bijoux et vous avez gagner",
+                "Vous avez pirate un compte bancaire et vous avez recuperer",
+                "Vous avez fait les poches de quelqu'un et vous avez trouver",
+                "Vous avez vole une voiture et vous lavez vendu pour",
+                "Vous avez vole des oeuvres d'art et vous avez obtenu",
+                "Vous avez pique des marchandises d'un entrepot et vous avez gagner",
+                "Vous avez devalise un magasin et vous avez recuperer",
+                "Vous avez extorque quelqu'un et vous avez obtenu",
+                "Vous avez chaparde des objets dans une boutique et vous avez gagner",
+                "Vous avez vole de l'argent sur un etal de marche et vous avez obtenu",
+                "Vous avez pris un sac oublie dans un cafe et vous avez trouver",
+                "Vous avez vole une montre de luxe et vous avez gagner",
+                "Vous avez profite d'un moment d'inattention pour derober et vous avez gagner",
+                "Vous avez derobe une caisse et vous avez recuperer",
+                "Vous avez vole une marchandise rare et vous lavez vendu pour",
+                "Vous avez brise un coffre et vous avez obtenu",
+                "Vous avez profite d'un vol express pour ramasser et vous avez gagner",
+                "Vous avez vole dans une chambre d'hotel et vous avez trouver",
+                "Vous avez subtilise des outils precieux et vous avez gagner",
+                "Vous avez cambriole une bijouterie et vous avez pris",
+                "Vous avez arnaque un passant et vous avez obtenu",
+                "Vous avez vide une caisse enregistreuse et vous avez recuperer",
+                "Vous avez vole une precieuse statue et vous l'avez vendue pour"
+            ],
+            "lose_phrases": [
+                "Vous avez ete pris a voler et vous devez payer",
+                "Vous avez ete attrape par la police et vous avez ete condamne a rembourser",
+                "Vous vous etes fait reperer et on vous a tout repris payez",
+                "Votre victime a crie a l'aide et vous avez du fuir sans rien payez",
+                "Vous avez ete arrete en flagrant delit et vous devez payer une amende de",
+                "Une camera de surveillance vous a filme, vous devez rendre",
+                "Vous avez trebuche en essayant de fuir et perdu tout votre butin payez",
+                "Un temoin vous a denonce et vous avez du payer des reparations de",
+                "Votre plan a echoue et vous etes ressorti les mains vides payez",
+                "Vous avez vole quelqu'un, mais il vous a attrape et repris tout payez",
+                "Vous avez sous-estime votre cible et perdu",
+                "Vous avez laisse une preuve derriere vous, payez une grosse amende de",
+                "Un passant vous a vu et vous on arrete avant de fuir payez",
+                "Vous avez declenche une alarme et perdu tout payez",
+                "La victime sest defendue et vous avez du abandonner votre butin de",
+                "Vous avez ete poursuivi et attrape par la securite payez",
+                "Vous avez panique et tout laisse derriere vous payez",
+                "Vous avez ete bloque par un chien de garde et avez du fuir payez",
+                "Une erreur dans votre plan vous a coute votre butin payez",
+                "Un passant courageux vous a desarme et signale payez",
+                "La police est arrivee avant votre fuite, vous avez tout perdu payez",
+                "Votre cible sest averee plus forte que vous et vous a maitrise payez",
+                "Une foule vous a attrape et force a vous rendre payez",
+                "Votre voiture de fuite est tombee en panne et vous avez tout perdu payez",
+                "Vous avez perdu le sac vole en courant payez",
+                "Une camera cachee vous a trahi, vous avez ete identifie payez",
+                "Votre complice vous a trahi et tout pris payez",
+                "Vous avez ete reconnu par la victime et arrete payez",
+                "Votre butin etait une fausse copie sans valeur payez",
+                "Votre plan etait trop risque et a echoue lamentablement payez"
+            ]
+        },
+        {
+            "name": "adventure",
+            "delay": 480,
+            "min_revenue": 1000,
+            "max_revenue": 10000,
+            "proba": 75,
+            "win_phrases": [
+                "Vous avez decouvert un ancien temple et obtenu",
+                "Vous avez trouve un tresor enfoui et gagne",
+                "Vous avez traverse une jungle hostile et ramene",
+                "Vous avez escalade une montagne dangereuse et gagne",
+                "Vous avez survecu a une tempete en mer et obtenu",
+                "Vous avez resolu une ancienne enigme et trouve",
+                "Vous avez decouvert une grotte cachee et recupere",
+                "Vous avez ete sauve par un aventurier et gagne",
+                "Vous avez trouve un artefact mystique et recupere",
+                "Vous avez traverse un desert aride et ramene",
+                "Vous avez navigue jusqu' une ile inconnue et recupere",
+                "Vous avez dompte un animal sauvage et gagne",
+                "Vous avez evade un piege mortel et recupere",
+                "Vous avez trouve un vieux coffre au fond de la mer et gagne",
+                "Vous avez decouvert une civilisation perdue et recupere",
+                "Vous avez traverse un pont suspendu dangereux et ramene",
+                "Vous avez trouve une porte secrete et ouvert",
+                "Vous avez resolu un mystere ancien et obtenu",
+                "Vous avez traverse un volcan actif et ramene",
+                "Vous avez trouve un livre ancien et decouvert",
+                "Vous avez dompte un dragon et gagne",
+                "Vous avez fait une rencontre incroyable avec une creature rare et obtenue",
+                "Vous avez franchi une forteresse imprenable et recupere",
+                "Vous avez ete guide par une carte ancienne et ramene",
+                "Vous avez ete choisi par les anciens et recupere",
+                "Vous avez trouve une relique magique et gagne",
+                "Vous avez decouvert un passage secret et entre",
+                "Vous avez fait une alliance avec des pirates et recupere",
+                "Vous avez evade un navire ennemi et sauve",
+                "Vous avez explore un temple maudit et gagne",
+                "Vous avez resolu une serie d'indices et trouve"
+            ],
+            "lose_phrases": [
+                "Vous avez ete pris dans un piege et perdez",
+                "Un obstacle insurmontable vous bloque et vous perdez",
+                "Vous avez echoue a dechiffrer le code et perdez",
+                "Une tempete vous a fait perdre votre cap et vous perdez",
+                "Vous vous etes egare dans la foret et perdez",
+                "Un monstre vous attaque et vous perdez",
+                "Vous etes tombe dans un gouffre et perdez",
+                "Une vieille structure s'effondre sous vos pieds et vous perdez",
+                "Vous vous etes fait surprendre par un piege et vous perdez",
+                "Une riviere en crue vous emporte et vous perdez",
+                "Votre bateau a sombre et vous perdez",
+                "Vous avez ete capture par des ennemis et vous perdez",
+                "Un ravin vous empeche de continuer et vous perdez",
+                "Vous avez ete attaque par des bandits et vous perdez",
+                "Une porte secrete se referme avant que vous n'ayez le temps de passer et vous perdez",
+                "Vous avez declenche une alerte et vous perdez",
+                "Votre equipement se brise et vous perdez",
+                "Vous avez fait une mauvaise estimation et vous perdez",
+                "Vous avez sous-estime l'ennemi et vous perdez",
+                "Un virus informatique vous a paralyse et vous perdez",
+                "Vous avez suivi un mauvais chemin et vous perdez",
+                "Une creature invisible vous attaque et vous perdez",
+                "Vous avez perdu la carte et vous perdez",
+                "Une avalanche vous fait tomber et vous perdez",
+                "Une maladie vous frappe et vous perdez",
+                "Vous avez rate une cle importante et vous perdez",
+                "Vous avez oublie de preparer votre equipement et vous perdez",
+                "Vous avez ete trahi par un allie et vous perdez",
+                "Un piege magique vous capture et vous perdez",
+                "Une erreur de calcul vous coute cher et vous perdez",
+                "Un environnement hostile vous paralyse et vous perdez"
+            ],
+            "min_lose_amount_percentage": 2,
+            "max_lose_amount_percentage": 2
+        }
+    ],
+    "symbols": [
+        {
+            "name": "currency_symbol",
+            "symbol_emoji": "my_currency_emoji_clear_name_only",
+            "income_reset": "true",
+            "global_collect": "2025-01-15 09:59:07.400264"
+        }
+    ],
+    "items": [
+        {
+            "name": "bbih",
+            "display_name": "BoukiBot is here",
+            "price": 30000,
+            "description": "Preuve que tu etait la au lancement du boukibot",
+            "duration": 3,
+            "amount_in_stock": 0,
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "1320364035534880769"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Eh ben ! Tu pourras te vanter davoir connu unbelievabot au lieu du boukibot.",
+            "expiration_date": "2024-12-25 13:34:00.948581",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "bonnet",
+            "display_name": "Bonnet de No\u00ebl",
+            "price": 2000,
+            "description": "<:bonnet_de_noel:1311327083531735121> Juste pour couvrir sa t\u00eate et pour de la d\u00e9co \u2728",
+            "duration": 99999,
+            "amount_in_stock": 0,
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-09 23:19:23.802762",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "flocons",
+            "display_name": "Flocons de no\u00ebl",
+            "price": 1000,
+            "description": "<:flocon:1311061524319834143> Des flocons de no\u00ebl \u00e0 1000 Bouken l'unit\u00e9 ? Et pourquoi pas ?",
+            "duration": 99999,
+            "amount_in_stock": 0,
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-09 23:21:23.625859",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "boules",
+            "display_name": "Boules de no\u00ebl",
+            "price": 1000,
+            "description": "<:boule_de_noel:1311067778630815764> Des boules de no\u00ebl d\u00e9 louxe \u2728",
+            "duration": 99999,
+            "amount_in_stock": 0,
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-09 23:23:23.071034",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "painepice",
+            "display_name": "Pain d'\u00e9pice",
+            "price": 3000,
+            "description": "<:pain_depice:1311800555403743252> Bah ouais, faut un peu de gourmandise en ce moment !",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-10 00:18:46.511395",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "BonNeige",
+            "display_name": "Bonhommes de neige",
+            "price": 8500,
+            "description": "<:bonhomme_de_neige:1311062019776057444> Des bonhommes de neige de l'arctique",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                ""
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-10 00:24:00.994908",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "couronno\u00ebl",
+            "display_name": "Couronne de no\u00ebl",
+            "price": 20000,
+            "description": "<:couronne_de_noel:1311075774979375196> Une couronne de no\u00ebl \u00e0 accrocher \u00e0 votre porte",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-10 00:25:30.303699",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "etoileno\u00ebl",
+            "display_name": "Etoile de no\u00ebl",
+            "price": 25000,
+            "description": "<:etoile_de_noel:1311062727590154240> La plus belle \u00e9toile de no\u00ebl de Proxima Centauri b",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-10 00:26:48.296946",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "sapinno\u00ebl",
+            "display_name": "Sapin de no\u00ebl",
+            "price": 28000,
+            "description": "<:sapin_de_noel:1311063607265722370> Un sapin a 28000 Bouken s\u00e9rieusement ?",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-10 00:28:56.762115",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "bucheno\u00ebl",
+            "display_name": "Buche de No\u00ebl",
+            "price": 16000,
+            "description": "<:buche_de_noel:1311800168747634698> Gardez-le au cong\u00e9lateur et faites plaisir \u00e0 vos invit\u00e9s \u2744\ufe0f\u2728",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-10 00:31:41.337565",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "chalet",
+            "display_name": "Chalet",
+            "price": 40000,
+            "description": "<:chalet:1311066704918351984> Un Chalet a 40000s Bouken \u00e7a vaaa",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-10-10 00:32:29.798718",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "chicken",
+            "display_name": "Chicken",
+            "price": 2000,
+            "description": "Un poulet des Balkan, en vaut-il vraiment le coup ?",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Merci d'avoir acheter cet article.",
+            "expiration_date": "2298-10-10 17:02:36.320938",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "airlines",
+            "display_name": "Club Voyageur - Micronation Airlines",
+            "price": 1000,
+            "description": "Avec le Club Voyageur de Micronation Airlines vous b\u00e9n\u00e9ficiez de plusieurs avantages (demandez les)",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Merci d'avoir acheter cet article.",
+            "expiration_date": "2298-10-10 17:04:56.775389",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        },
+        {
+            "name": "ferries",
+            "display_name": "Club Voyageur - Micronation Ferries",
+            "price": 1000,
+            "description": "En rejoignant le Club Voyageur de Micronations Ferries vous pourrez profiter de plusieurs avantages au sein des compagnies de ferries des micronations (demandez les)",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Merci d'avoir acheter cet article.",
+            "expiration_date": "2298-10-10 17:06:09.600661",
+            "item_img_url": "EMPTY",
+            "vendeur": "none"
+        }
+    ],
+    "income_roles": [
+        {
+            "role_id": "1301609488532508773",
+            "role_income": 15000,
+            "last_single_called": {
+                "1260985595233042444": "2025-01-09 19:05:48.902054",
+                "805488965854429194": "2025-01-14 17:52:29.979728",
+                "1232738443830759447": "2025-01-15 07:29:51.895836",
+                "769181665234386944": "2025-01-15 09:59:07.398728",
+                "1002567936252313690": "2025-01-14 19:17:12.107793",
+                "1146539495643156660": "2025-01-12 14:39:34.215500",
+                "710768308579860541": "2025-01-09 00:06:37.956169",
+                "1095377033170784356": "2025-01-14 17:35:50.845135",
+                "1322216984892407828": "2025-01-08 20:08:00.758304",
+                "939927568533057586": "2025-01-14 00:05:56.337555",
+                "355441747809140738": "2025-01-13 15:20:48.814880"
+            },
+            "last_updated": "2024-12-24 18:00:22.906346"
+        },
+        {
+            "role_id": "1320299526648758304",
+            "role_income": 3000,
+            "last_single_called": {
+                "1071711810207617064": "2024-12-29 13:58:07.544425",
+                "1232738443830759447": "2025-01-15 07:29:51.895836",
+                "769181665234386944": "2025-01-15 09:59:07.400264"
+            },
+            "last_updated": "2024-12-24 18:01:23.188441"
+        },
+        {
+            "role_id": "1301199809474199622",
+            "role_income": 2500,
+            "last_single_called": {
+                "1232738443830759447": "2025-01-15 07:29:51.895836"
+            },
+            "last_updated": "2024-12-24 18:33:14.713985"
+        },
+        {
+            "role_id": "1318137169079959612",
+            "role_income": 1,
+            "last_single_called": {
+                "710768308579860541": "2025-01-09 00:07:21.344401"
+            },
+            "last_updated": "2024-12-24 18:41:44.029541"
+        },
+        {
+            "role_id": "1320288571474579488",
+            "role_income": 2000,
+            "last_single_called": {
+                "939927568533057586": "2025-01-15 00:03:09.865020"
+            },
+            "last_updated": "2024-12-24 19:43:33.392426"
+        },
+        {
+            "role_id": "1297991649988710431",
+            "role_income": 3000,
+            "last_single_called": {
+                "1232738443830759447": "2025-01-15 07:29:51.895836",
+                "1287020715962273904": "2025-01-14 14:19:46.633065",
+                "1133394413331161208": "2025-01-15 07:22:54.092079",
+                "710768308579860541": "2025-01-09 00:06:37.956169",
+                "598076783186935808": "2025-01-15 07:37:53.866087",
+                "939927568533057586": "2025-01-15 00:03:09.860844",
+                "976125753336922142": "2025-01-14 10:49:02.186676"
+            },
+            "last_updated": "2024-12-24 19:44:35.442979"
+        },
+        {
+            "role_id": "1297924147992858644",
+            "role_income": 1000,
+            "last_single_called": {
+                "1140556277634834523": "2024-12-28 18:39:12.675368",
+                "805488965854429194": "2025-01-14 17:52:29.979728",
+                "1232738443830759447": "2025-01-15 07:29:51.895836",
+                "1287020715962273904": "2025-01-14 14:19:46.629948",
+                "939927568533057586": "2025-01-15 00:03:09.860844",
+                "769181665234386944": "2025-01-15 09:59:07.398728",
+                "1072941929228161064": "2025-01-03 13:16:16.203562",
+                "1002567936252313690": "2025-01-14 19:17:12.110560",
+                "1170781935178612941": "2024-12-25 14:16:15.321752",
+                "1134093095860977707": "2025-01-03 15:15:06.255110",
+                "1260985595233042444": "2025-01-09 19:05:48.902054",
+                "1133394413331161208": "2025-01-15 07:22:54.064877",
+                "355441747809140738": "2025-01-13 15:20:48.815883",
+                "1146539495643156660": "2025-01-12 14:39:34.231846",
+                "1071711810207617064": "2024-12-29 13:58:07.542426",
+                "710768308579860541": "2025-01-09 00:06:37.956169",
+                "1095377033170784356": "2025-01-14 17:35:50.845135",
+                "1322216984892407828": "2025-01-08 20:08:00.758929",
+                "1091391553982959687": "2025-01-13 19:56:34.448509",
+                "1301912028981493760": "2024-12-29 12:38:50.709350",
+                "598076783186935808": "2025-01-15 07:37:53.866087",
+                "1284648869027778642": "2025-01-03 12:43:37.547323",
+                "976125753336922142": "2025-01-14 10:49:02.186676",
+                "1325388496268951592": "2025-01-09 06:57:54.801220",
+                "1306217018399133780": "2025-01-08 12:14:22.104258",
+                "955502067655512084": "2025-01-08 15:57:03.259353",
+                "1327313926861619211": "2025-01-13 20:17:20.053798"
+            },
+            "last_updated": "2024-12-24 19:45:55.993513"
+        },
+        {
+            "role_id": "1299078617850187878",
+            "role_income": 15000,
+            "last_single_called": {
+                "1287020715962273904": "2025-01-14 14:19:46.633065",
+                "355441747809140738": "2025-01-13 15:20:48.815883",
+                "1002567936252313690": "2025-01-14 19:17:12.110560",
+                "1134093095860977707": "2025-01-03 15:15:06.257125",
+                "1232738443830759447": "2025-01-15 07:29:51.895836",
+                "1072941929228161064": "2025-01-04 00:00:35.698782",
+                "805488965854429194": "2025-01-14 17:52:29.979728",
+                "710768308579860541": "2025-01-09 00:06:37.956169",
+                "1140556277634834523": "2024-12-28 18:39:12.677359",
+                "1260985595233042444": "2025-01-09 19:05:48.902054",
+                "769181665234386944": "2025-01-15 09:59:07.398728",
+                "598076783186935808": "2025-01-15 07:37:53.866087",
+                "939927568533057586": "2025-01-15 00:03:09.860844",
+                "976125753336922142": "2025-01-14 10:49:02.187727"
+            },
+            "last_updated": "2024-12-25 22:45:22.883440"
+        },
+        {
+            "role_id": "1321169748935049326",
+            "role_income": 4500,
+            "last_single_called": {
+                "939927568533057586": "2025-01-08 06:04:04.412665"
+            },
+            "last_updated": "2024-12-25 23:04:11.390223"
+        },
+        {
+            "role_id": "1322299596667617391",
+            "role_income": 1500,
+            "last_single_called": {
+                "939927568533057586": "2025-01-15 00:03:09.865020"
+            },
+            "last_updated": "2024-12-27 22:01:29.694515"
+        },
+        {
+            "role_id": "1322304670194073651",
+            "role_income": 1000,
+            "last_single_called": {
+                "1091391553982959687": "2025-01-13 19:56:34.450623"
+            },
+            "last_updated": "2024-12-27 22:04:10.221310"
+        }
+    ]
+}
