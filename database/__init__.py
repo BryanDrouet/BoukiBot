@@ -896,7 +896,7 @@ class pythonboat_database_handler:
 		if amount == "all":
 			amount = user_cash
 			if amount < 0:
-				return "error", f"{emoji_error}  No negative values."
+				return "error", f"{emoji_error} Vous avez des dettes a régler avant !\n-# Votre main est négative."
 			if user_cash == 0:
 				return "error", f"{emoji_error} Vous n’avez rien à déposer !"
 				
