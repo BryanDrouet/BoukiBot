@@ -715,10 +715,29 @@ class pythonboat_database_handler:
 		"""
 		# grep values
 		rob_data = json_content["variables"][self.variable_dict["rob"]]
-	
+		
+		now = datetime.datetime.now()
+		current_week = now.isocalendar()[1]  # Numéro de la semaine actuelle
+		last_rob_week = json_user_content.get("last_rob_week", None)
+		
+		if last_rob_week != current_week:
+			# Si l'utilisateur n'a pas encore effectué de vols cette semaine, réinitialiser le compteur
+			json_user_content["rob_count"] = 0
+			json_user_content["last_rob_week"] = current_week
+		
 		# delay will ALWAYS be in MINUTES
 		delay = rob_data["delay"]
 		proba = rob_data["proba"]
+		
+		if json_user_content["rob_count"] >= 3:
+			color = self.discord_error_rgb_code
+			embed = discord.Embed(description=f"{emoji_error}  Vous avez atteint la limite de 3 vols cette semaine.", color=color)
+			embed.set_author(name=username, icon_url=user_pfp)
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			await channel.send(embed=embed)
+			return "success", "success"
+		
+		json_user_content["rob_count"] += 1
 	
 		time_check = False
 		now = datetime.datetime.now()
