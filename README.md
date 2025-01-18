@@ -20,8 +20,8 @@ Pour consulter les termes complets de la licence : [CC BY 4.0](https://creativec
 
 ## A modifier
 
-- `main.py` - Lignes 6 à 11, 21 & 265 (Nom des rôles)
-- `database\__init__.py` - Lignes 8, 9 & 20
+- `main.py` - Lignes 6 à 13, 22 & 265 à 268 (Nom des rôles)
+- `database\__init__.py` - Lignes 8 à 10 & 20
 
 Le tuto arrive bientôt !
 
