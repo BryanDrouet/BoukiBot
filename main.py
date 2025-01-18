@@ -518,11 +518,11 @@ async def on_message(message):
 	# --------------
 
 	if command in ["rob", "steal"]:  # no alias
-		if not ("Mafieux" in staff_request or "Gérant Bot et Mafieux" in staff_request):
+		if not ("Mafieux" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Mafieux", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		
@@ -530,7 +530,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`rob <user>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -543,7 +543,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{rob_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
