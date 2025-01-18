@@ -2889,5 +2889,41 @@ async def on_message(message):
 			await send_error(channel)
 	
 	await bot.process_commands(message)
+	
+	# ---------------------------
+	# TEST
+	# ---------------------------
+	
+	if command in ["test"]:
+	
+		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+			color = discord_error_rgb_code
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed.set_author(name=username, icon_url=user_pfp)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			await channel.send(embed=embed)
+			return
+
+		try:
+			channel = bot.get_channel(channelBoukiBot)
+			user_id = message.author.id
+			await channel.send("-# Message de test")
+			embed=discord.Embed(description="# Test", color=discord.Color.blue())
+			embed.add_field(name="", value="**Test réussi.**", inline=False)
+			embed.add_field(name="", value=f"-# Test de <@{user_id}>", inline=False)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			
+			await channel.send(embed=embed)
+		
+			print(f"Test réussi.")
+			
+			channel = bot.get_channel(log_channel)
+			await channel.send("Test réussi.")
+		
+		except Exception as e:
+			print(e)
+			await send_error(channel)
+	
+	await bot.process_commands(message)
 
 bot.run(token)
