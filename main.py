@@ -9,9 +9,9 @@ emoji_worked = "✅"
 emoji_error = "❌"  #Officiel
 channelBot = IdChannel
 log_channel = IdChannel
-locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
 BOT_PREFIX = "+"
 nom_bot = "BotPersonnalisé"
+locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
 discord_error_rgb_code = discord.Color.from_rgb(239, 83, 80)
 intents = discord.Intents.all()
 bot = Bot(command_prefix=BOT_PREFIX, intents=intents)
