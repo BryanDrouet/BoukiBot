@@ -2780,61 +2780,113 @@ async def on_message(message):
 	# ---------------------------
 	
 	elif command in ["start"]:
-		channel = bot.get_channel(channelBot)
-		await channel.send("-# <@&1321073676946243616>")
-		embed = discord.Embed(description=f"## {emoji_error}  {nom_bot} part temporairement !",color=discord.Color.red())
-		embed.add_field(name="\n🛠 Statut", value="Hors ligne", inline=True)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+			color = discord_error_rgb_code
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed.set_author(name=username, icon_url=user_pfp)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			await channel.send(embed=embed)
+			return
 
-		await channel.send(embed=embed)
-		print(f"Début de la maintenance.")
+		try:
+			channel = bot.get_channel(channelBoukiBot)
+			await channel.send("-# <@&1321073676946243616>")
+			embed = discord.Embed(description=f"## {emoji_error}  BoukiBot part temporairement !",color=discord.Color.red())
+			embed.add_field(name="\n🛠 Statut", value="Hors ligne", inline=True)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+	
+			await channel.send(embed=embed)
+			print(f"Début de la maintenance.")
+			
+			channel = bot.get_channel(log_channel)
+			await channel.send("Message posté")
 		
-		channel = bot.get_channel(log_channel)
-		await channel.send("Message posté")
+		except Exception as e:
+			print(e)
+			await send_error(channel)
 	
 	
 	elif command in ["stop"]:
-		channel = bot.get_channel(channelBot)
-		await channel.send("-# <@&1321073676946243616>")
-		embed = discord.Embed(description=f"## 🎉  {nom_bot} est de retour !", color=discord.Color.green())
-		embed.add_field(name="\n🛠 Statut", value="En ligne", inline=True)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+			color = discord_error_rgb_code
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed.set_author(name=username, icon_url=user_pfp)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			await channel.send(embed=embed)
+			return
 
-		await channel.send(embed=embed)
-		print(f"Fin de la maintenance.")
+		try:
+			channel = bot.get_channel(channelBoukiBot)
+			await channel.send("-# <@&1321073676946243616>")
+			embed = discord.Embed(description=f"## 🎉  BoukiBot est de retour !", color=discord.Color.green())
+			embed.add_field(name="\n🛠 Statut", value="En ligne", inline=True)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+	
+			await channel.send(embed=embed)
+			print(f"Fin de la maintenance.")
+			
+			channel = bot.get_channel(log_channel)
+			await channel.send("Message posté")
 		
-		channel = bot.get_channel(log_channel)
-		await channel.send("Message posté")
+		except Exception as e:
+			print(e)
+			await send_error(channel)
 		
 	elif command in ["maintenance"]:
-		channel = bot.get_channel(channelBot)
-		await channel.send("-# <@&1321073676946243616>")
-		embed=discord.Embed(description="## Maintenance de <@1318161613202653194> <t:1736272800:R>", color=discord.Color.blue())
-		embed.add_field(name="", value="**Revenez ici dans quelques temps nous enverrons un message ici quand le Bot sera mis à jour.**", inline=False)
-		embed.add_field(name="** **", value="Fin prévue de la maintenance : **environ le <t:1736280000:F>**", inline=False)
-		embed.add_field(name="", value="-# Envie de recevoir les notifications des prochaines maintenances ?\n-# Prenez le rôle dans <#1298357497916035184> !", inline=False)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+			color = discord_error_rgb_code
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed.set_author(name=username, icon_url=user_pfp)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			await channel.send(embed=embed)
+			return
+
+		try:
+			channel = bot.get_channel(channelBoukiBot)
+			await channel.send("-# <@&1321073676946243616>")
+			embed=discord.Embed(description="## Maintenance de <@1318161613202653194> <t:1736272800:R>", color=discord.Color.blue())
+			embed.add_field(name="", value="**Revenez ici dans quelques temps nous enverrons un message ici quand le Bot sera mis à jour.**", inline=False)
+			embed.add_field(name="** **", value="Fin prévue de la maintenance : **environ le <t:1736280000:F>**", inline=False)
+			embed.add_field(name="", value="-# Envie de recevoir les notifications des prochaines maintenances ?\n-# Prenez le rôle dans <#1298357497916035184> !", inline=False)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			
+			await channel.send(embed=embed)
+			print(f"Annonce de la maintenance.")
+			
+			channel = bot.get_channel(log_channel)
+			await channel.send("Message posté")
 		
-		await channel.send(embed=embed)
-		print(f"Annonce de la maintenance.")
-		
-		channel = bot.get_channel(log_channel)
-		await channel.send("Message posté")
+		except Exception as e:
+			print(e)
+			await send_error(channel)
 		
 	elif command in ["post"]:
-		channel = bot.get_channel(channelBot)
-		await channel.send("-# <@&1321073676946243616>")
-		embed=discord.Embed(description="# Mise en arrêt temporaire", color=discord.Color.blue())
-		embed.add_field(name="", value="**Le Bot sera éteint aujoud'hui à partir d'environ 9h40 (<t:1737189600:R>) jusqu'a environ 12h (<t:1737198000:R>) pour cause de réunion webradio je m'en excuse d'avance.**", inline=False)
-		embed.add_field(name="", value="-# Envie de recevoir les notifications des prochains posts ?\n-# Prenez le rôle dans <#1298357497916035184> !", inline=False)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+			color = discord_error_rgb_code
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed.set_author(name=username, icon_url=user_pfp)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			await channel.send(embed=embed)
+			return
+
+		try:
+			channel = bot.get_channel(channelBoukiBot)
+			await channel.send("-# <@&1321073676946243616>")
+			embed=discord.Embed(description="# Mise en arrêt temporaire", color=discord.Color.blue())
+			embed.add_field(name="", value="**Le Bot sera éteint aujoud'hui à partir d'environ 9h40 (<t:1737189600:R>) jusqu'a environ 12h (<t:1737198000:R>) pour cause de réunion webradio je m'en excuse d'avance.**", inline=False)
+			embed.add_field(name="", value="-# Envie de recevoir les notifications des prochains posts ?\n-# Prenez le rôle dans <#1298357497916035184> !", inline=False)
+			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			
+			await channel.send(embed=embed)
 		
-		await channel.send(embed=embed)
+			print(f"Message posté.")
+			
+			channel = bot.get_channel(log_channel)
+			await channel.send("Message posté.")
 		
-		print(f"Message posté.")
-		
-		channel = bot.get_channel(log_channel)
-		await channel.send("Message posté.")
+		except Exception as e:
+			print(e)
+			await send_error(channel)
 	
 	await bot.process_commands(message)
 
