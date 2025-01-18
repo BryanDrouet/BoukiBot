@@ -7,10 +7,11 @@ APPLICATION_ID = "IdBot"
 token = "Token"
 emoji_worked = "✅"
 emoji_error = "❌"  #Officiel
-channelBoukiBot = IdChannel
+channelBot = IdChannel
 log_channel = IdChannel
 locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
 BOT_PREFIX = "+"
+nom_bot = "BotPersonnalisé"
 discord_error_rgb_code = discord.Color.from_rgb(239, 83, 80)
 intents = discord.Intents.all()
 bot = Bot(command_prefix=BOT_PREFIX, intents=intents)
@@ -103,7 +104,7 @@ async def send_error(channel):
 		locale="fr_FR"
 	)
 	embed = discord.Embed(title="Erreur.", description="Erreur interne, demandez de l'aide à un membre du staff ou à @Bryan_Drouet.", color=0xff0000)
-	embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+	embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 	await channel.send(embed=embed)
 	return
 
@@ -126,7 +127,7 @@ async def log_transaction(user, channel_id, change_type, amount, reason, before_
 							f"**Channel :** <#{channel_id}>",
 				color=discord.Color.green()
 			)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await log_channel.send(embed=embed)
 
 @bot.event
@@ -148,13 +149,13 @@ async def on_ready():
     channel = bot.get_channel(log_channel)
     if channel:
         embed = discord.Embed(
-            title="🎉 BoukiBot est en ligne !",
+            title=f"🎉 {nom_bot} est en ligne !",
             description="",
             color=discord.Color.blue()
         )
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/707868018708840508/1318353739920183416/RP.png?ex=67620419&is=6760b299&hm=eb566e37869fd02b7a24fa39c8fb0489793ad7e21c9f1c146c0fdec3f3e6db0a&=&format=webp&quality=lossless&width=584&height=584")  # Remplace par l'URL du logo
         embed.add_field(name="🛠 Statut", value="En ligne", inline=True)
-        embed.add_field(name="📋 Détails", value="BoukiBot est là pour gérer l'économie du serveur.", inline=True)
+        embed.add_field(name="📋 Détails", value=f"{nom_bot} est là pour gérer l'économie du serveur.", inline=True)
 
         await channel.send(embed=embed)
         print(f"Bot prêt.")
@@ -258,13 +259,13 @@ async def on_message(message):
 	nickname = str(message.author.display_name)
 	user_roles = [randomvar.id for randomvar in message.author.roles]
 
-	# some stuff will be only for staff, which will be recognizable by the Gérant BoukiBot role
+	# some stuff will be only for staff, which will be recognizable by the Gérant {nom_bot} role
 	roles = [role.name for role in message.author.roles]
 	staff_request = "Non Staff"
 	for role_to_check in message.author.roles:
-		if "GB・Gérant BoukiBot" in roles and "M・Mafieux" in roles: staff_request = "Gérant BoukiBot et Mafieux"
-		elif "GB・Gérant BoukiBot" in roles: staff_request = "Gérant BoukiBot"
-		elif "M・Mafieux" in roles: staff_request = "Mafieux"
+		if "Gérant Bot" in roles and "M・Mafieux" in roles: staff_request = "Gérant Bot et Mafieux"
+		elif "Gérant Bot" in roles: staff_request = "Gérant Bot"
+		elif "Mafieux" in roles: staff_request = "Mafieux"
 	print("Statut : ", staff_request)
 	command = command[0]
 
@@ -276,7 +277,7 @@ async def on_message(message):
 		latency = round(bot.latency * 1000)  # Convertit en millisecondes
 		embed = discord.Embed(title="🏓 Pong !", description=f"Latence : `{latency} ms`", color=discord.Color.blue())
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 	
 	# --------------
@@ -288,7 +289,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`blackjack <amount or all>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -307,14 +308,14 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`. Le pari doit être d’au moins 100.\n", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 					await channel.send(embed=embed)
 					return
 			except:
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`roulette <amount or all> <space>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		bet = str(bet)
@@ -328,7 +329,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{bj_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -349,7 +350,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`roulette <amount or all> <space>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 	
@@ -363,14 +364,14 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`. Le pari doit être d’au moins 100 Boukens.\n", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 					await channel.send(embed=embed)
 					return
 			except:
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`roulette <amount or all> <space>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		bet = str(bet)
@@ -389,7 +390,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<space>`.\n\nUsage:\n`roulette <amount or all> <space>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 	
@@ -404,7 +405,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{roulette_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -416,12 +417,12 @@ async def on_message(message):
 	# --------------
 
 	if command in ["slut"]:  # no alias
-		# Vérifie si l'utilisateur a le rôle "Mafieux" ou "Gérant BoukiBot et Mafieux"
-		if not ("Mafieux" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		# Vérifie si l'utilisateur a le rôle "Mafieux" ou "Gérant {nom_bot} et Mafieux"
+		if not ("Mafieux" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Mafieux", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		else:
@@ -432,7 +433,7 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{slut_return}", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 					await channel.send(embed=embed)
 					return
 			except Exception as e:
@@ -444,11 +445,11 @@ async def on_message(message):
 	# -------------------
 	
 	if command in ["adventure", "aventure", "adv", "av"]:
-		if "Mafieux" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request:
+		if "Mafieux" in staff_request or "Gérant Bot} et Mafieux" in staff_request:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Cette commande n'est pas accessible aux Mafieux", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		else:
@@ -458,7 +459,7 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{adventure_return}", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 					await channel.send(embed=embed)
 					return
 			except Exception as e:
@@ -470,11 +471,11 @@ async def on_message(message):
 	# --------------
 
 	if command in ["crime"]:  # no alias
-		if not ("Mafieux" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Mafieux" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Mafieux", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		
@@ -485,7 +486,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{crime_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -504,7 +505,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{work_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -517,11 +518,11 @@ async def on_message(message):
 	# --------------
 
 	if command in ["rob", "steal"]:  # no alias
-		if not ("Mafieux" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Mafieux" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Mafieux", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		
@@ -529,7 +530,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`rob <user>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -542,7 +543,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{rob_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -565,7 +566,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `[user]`.\n\nUsage:\n`balance <user>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		# else we want the balance of someone else
@@ -580,7 +581,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `[user]`.\n\nUsage:\n`balance <user>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -600,7 +601,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`deposit <amount or all>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -619,14 +620,14 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`deposit <amount or all>`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 					await channel.send(embed=embed)
 					return
 			except:
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`deposit <amount or all>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -638,7 +639,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{dep_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -654,7 +655,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`withdraw <amount or all>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -673,14 +674,14 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`withdraw <amount or all>`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 					await channel.send(embed=embed)
 					return
 			except:
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`withdraw <amount or all>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -692,7 +693,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{with_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -710,7 +711,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`give <member> <amount or all>`\nInfo : pour les items utilisez `give-item` !",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -731,7 +732,7 @@ async def on_message(message):
 				embed = discord.Embed(description=f"{emoji_error}  Vous ne pouvez pas échanger de l’argent avec vous-même. Ce serait inutile.\n"
 												  f"(Vous recherchez peut-être la commande `add-money`.)", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -741,7 +742,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`give <member> <amount or all>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -762,7 +763,7 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`give <member> <amount or all>`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 					await channel.send(embed=embed)
 					return
 			except:
@@ -771,7 +772,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`give <member> <amount or all>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -785,7 +786,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{give_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -828,7 +829,7 @@ async def on_message(message):
 						description=f"{emoji_error}  Argument donné non valide `[-cash | -bank | -total]`.\n\nUsage:\n"
 									f"`leaderboard [page] [-cash | -bank | -total]`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 					await channel.send(embed=embed)
 					return
 		# two arguments
@@ -845,7 +846,7 @@ async def on_message(message):
 						description=f"{emoji_error}  Argument donné non valide `[-cash | -bank | -total]`.\n\nUsage:\n"
 									f"`leaderboard [page] [-cash | -bank | -total]`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 					await channel.send(embed=embed)
 					return
 			except:
@@ -854,7 +855,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `[-cash | -bank | -total]`.\n\nUsage:\n"
 								f"`leaderboard [page] [-cash | -bank | -total]`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -867,7 +868,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{lb_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -880,7 +881,7 @@ async def on_message(message):
 
 	elif command in ["help", "info"]:
 		color = discord.Color.from_rgb(3, 169, 244)
-		embed = discord.Embed(title=f"Toutes les commandes de BoukiBot PART1", color=color)
+		embed = discord.Embed(title=f"Toutes les commandes de {nom_bot} PART1", color=color)
 		embed.add_field(name="Afficher les stats du serveur", value=f"`+stats`", inline=False)
 		embed.add_field(name="Jouer au blackjack", value=f"`+blackjack <amount or all>`"f"\nou `+bj`", inline=True)
 		embed.add_field(name="Jouer a la roulette", value=f"`+roulette <amount or all> <space>`"f"\nou `+rl`", inline=True)
@@ -902,7 +903,7 @@ async def on_message(message):
 
 		#### in 2 parts because one was too long
 
-		embed = discord.Embed(title=f"Toutes les commandes de BoukiBot PART2", color=color)
+		embed = discord.Embed(title=f"Toutes les commandes de {nom_bot} PART2", color=color)
 		embed.add_field(name="Ajouter de l'argent", value=f"`+add-money <member> <amount>`", inline=True)
 		embed.add_field(name="Retirer de l'argent", value=f"`+remove-money <member> <amount> [cash/bank]`", inline=True)
 		embed.add_field(name="Supprime de l'argent à un rôle", value=f"`+remove-money-role <role> <amount>`", inline=True)
@@ -927,7 +928,7 @@ async def on_message(message):
 		embed.add_field(name="Affiche la liste des roles avec salaire", value=f"`+list-roles`", inline=True)
 		embed.add_field(name="Recolter votre salaire", value=f"`+collect`", inline=True)
 		embed.add_field(name="Mettre a jour un salaire", value=f"`+update-income`", inline=True)
-		embed.set_footer(text=f"Pour plus d'infos demandez de l'aide à un membre du staff ou à @Bryan_Drouet.\nBoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"Pour plus d'infos demandez de l'aide à un membre du staff ou à @Bryan_Drouet.\n{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 	# --------------
@@ -941,7 +942,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`module <module>`",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -956,7 +957,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{module_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -972,11 +973,11 @@ async def on_message(message):
 	# --------------
 
 	elif command == "add-money":
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -984,7 +985,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`add-money <member> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1004,7 +1005,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`add-money <member> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1025,14 +1026,14 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`add-money <member> <amount>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`add-money <member> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1046,7 +1047,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{add_money_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1058,11 +1059,11 @@ async def on_message(message):
 	# --------------
 
 	elif command == "remove-money":
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1070,7 +1071,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-money <member> <amount> [cash/bank]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1091,7 +1092,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`remove-money <member> <amount> [cash/bank]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1112,14 +1113,14 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`remove-money <member> <amount> [cash/bank]`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`remove-money <member> <amount> [cash/bank]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1133,7 +1134,7 @@ async def on_message(message):
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `[cash/bank]`.\n\nUsage:"
 												  f"\n`remove-money <member> <amount> [cash/bank]`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -1147,7 +1148,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{rm_money_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1159,11 +1160,11 @@ async def on_message(message):
 	# --------------
 
 	elif command in ["change", "edit"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1171,7 +1172,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`change <module> <variable> <new value>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1180,7 +1181,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Vous ne pouvez pas changer les noms de module.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1197,7 +1198,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<new value>`.\n\nUsage:\n`change <module> <variable> <new value>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1211,7 +1212,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{edit_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1223,11 +1224,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["change-currency", "edit_currency"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1235,7 +1236,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`change-currency <new emoji name>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1249,7 +1250,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_edit_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1261,11 +1262,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["set-income-reset", "change-income-reset"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1275,7 +1276,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage: `set-income-reset <false/true>`",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1285,7 +1286,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage: `set-income-reset <false/true>`",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1300,7 +1301,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{new_income_reset_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1317,11 +1318,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["create-item", "new-item", "item-create"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1753,7 +1754,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{create_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1765,11 +1766,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["delete-item", "remove-item"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1777,7 +1778,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`delete-item <item short name>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1803,7 +1804,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{remove_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1813,7 +1814,7 @@ async def on_message(message):
 		color = discord.Color.from_rgb(102, 187, 106) # green
 		embed = discord.Embed(description=f"{emoji_worked}  L’article a été retiré du magasin.\nRemarque : supprime également de l’inventaire de tout le monde.", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		return
@@ -1823,11 +1824,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["remove-user-item"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1835,7 +1836,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-user-item <member> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1851,7 +1852,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`remove-user-item <member> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1859,7 +1860,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-user-item <member> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		item_name = param[2]
@@ -1875,14 +1876,14 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`remove-user-item <member> <item short name> <amount>", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`remove-user-item <member> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1894,7 +1895,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{remove_user_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1907,11 +1908,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["clean-leaderboard", "clean-lb"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -1934,7 +1935,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{clean_lb_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1945,7 +1946,7 @@ async def on_message(message):
 		color = discord.Color.from_rgb(102, 187, 106) # green
 		embed = discord.Embed(description=f"{emoji_worked} {clean_lb_return} utilisateur(s) ont été supprimés de la base de données.", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		return
@@ -1960,7 +1961,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error} Trop peu d’arguments donnés.\n\nUsage:\n`buy-item <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		item_name = param[1]
@@ -1977,14 +1978,14 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error} Argument donné non valide `amount`.\n\nUsage:\n`buy-item <item short name> <amount>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error} Argument donné non valide `amount`.\n\nUsage:\n`buy-item <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 	
@@ -2003,7 +2004,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{buy_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 	
@@ -2018,7 +2019,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error} Une erreur inattendue est survenue lors du traitement de l'achat.", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 	
@@ -2035,7 +2036,7 @@ async def on_message(message):
 				color = discord.Color.green()
 				embed = discord.Embed(description=f"{emoji_worked} Achat de **{item_name}** effectué avec succès pour {price * amount} Boukens. Aucun vendeur assigné.", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 	
@@ -2087,11 +2088,11 @@ async def on_message(message):
 
 	elif command in ["give-item"]:
 		"""
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		"""
@@ -2100,7 +2101,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`give-item <player pinged> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2117,7 +2118,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Vous ne pouvez pas échanger d’objets avec vous-même. Cela serait inutile...", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -2127,7 +2128,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`give-item <player pinged> <item> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2135,7 +2136,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`give-item <player pinged> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		item_name = param[2]
@@ -2152,14 +2153,14 @@ async def on_message(message):
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`give-item <player pinged> <item short "
 												  f"name> <amount>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`give-item <player pinged> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2171,7 +2172,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{give_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2185,11 +2186,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["spawn-item"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2198,7 +2199,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2216,7 +2217,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2224,7 +2225,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		item_name = param[2]
@@ -2240,14 +2241,14 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2259,7 +2260,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{give_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2277,7 +2278,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`use-item <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		else:
@@ -2295,7 +2296,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Le montant doit être un nombre entier (entier).\n\nUsage:\n`use-item <item short name> <amount>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -2306,7 +2307,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{use_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -2335,7 +2336,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Numéro de page non valide.\n\nUsage:\n`inventory [page]`", color=color)
 				embed.set_footer(text="info : l’utiliser sans page une fois, la sortie montrera le nombre de pages total.\ninfo : utiliser user-inventory pour voir l’inventaire d’un autre utilisateur.")
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -2347,7 +2348,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{inventory_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2370,7 +2371,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`user-inventory <member> [page]`", color=color)
 			embed.set_footer(text="info : utilisez ``inventory`` pour voir votre propre inventaire.")
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		else:
@@ -2392,7 +2393,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Ping invalide.\n\nUsage:\n`user-inventory <member> [page]`", color=color)
 				embed.set_footer(text="info : utilisez ``inventory`` pour voir votre propre inventaire.")
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -2408,7 +2409,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Numéro de page non valide.\n\nUsage:\n`user-inventory <member> [page]`", color=color)
 				embed.set_footer(text="info : l’utiliser sans page une fois, la sortie montrera le nombre total de pages")
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 
@@ -2422,7 +2423,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{inventory_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2448,7 +2449,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{catalog_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2462,11 +2463,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["add-income-role", "add-role-income"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 		
@@ -2476,7 +2477,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`add-income-role <role pinged> <income>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2507,14 +2508,14 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`add-income-role <role pinged> <amount>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`add-income-role <role pinged> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2525,7 +2526,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{create_role_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2538,11 +2539,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["remove-income-role", "delete-income-role", "remove-role-income", "delete-role-income"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2550,7 +2551,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-income-role <role pinged>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2578,7 +2579,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{remove_role_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2588,7 +2589,7 @@ async def on_message(message):
 		color = discord.Color.from_rgb(102, 187, 106)  # green
 		embed = discord.Embed(description=f"{emoji_worked}  Le rôle n'a pas de salaire.", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		return
@@ -2598,11 +2599,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["remove-money-role", "remove-role-money"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2612,7 +2613,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-money-role <role pinged> <amount>`",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2631,7 +2632,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`remove-money-role <role pinged> <amount>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except:
@@ -2639,7 +2640,7 @@ async def on_message(message):
 			embed = discord.Embed(
 				description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`remove-money-role <role pinged> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2661,7 +2662,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{remove_money_role_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2680,7 +2681,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{list_roles_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2693,11 +2694,11 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["update-income"]:
-		if not ("Gérant BoukiBot" in staff_request or "Gérant BoukiBot et Mafieux" in staff_request):
+		if not ("Gérant Bot" in staff_request or "Gérant Bot et Mafieux" in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant BoukiBot", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant Bot", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return
 
@@ -2707,7 +2708,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{update_incomes_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2717,7 +2718,7 @@ async def on_message(message):
 		color = discord.Color.from_rgb(102, 187, 106)  # green
 		embed = discord.Embed(description=f"{emoji_worked}  Les utilisateurs ayant des rôles enregistrés ont reçu leurs revenus (dans leur compte bancaire).", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		return
@@ -2735,7 +2736,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{update_incomes_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2746,7 +2747,7 @@ async def on_message(message):
 		color = discord.Color.from_rgb(102, 187, 106)  # green
 		embed = discord.Embed(description=f"{emoji_worked}  You have received {update_incomes_return} for your roles {roles_return} (into bank account).", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 		"""
 		return
@@ -2764,7 +2765,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{economy_stats_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2775,15 +2776,15 @@ async def on_message(message):
 		return
 	
 	# ---------------------------
-	# START/STOP/ANNOUNCE/POST
+	# START/STOP/MAINTENANCE/POST
 	# ---------------------------
 	
 	elif command in ["start"]:
-		channel = bot.get_channel(channelBoukiBot)
+		channel = bot.get_channel(channelBot)
 		await channel.send("-# <@&1321073676946243616>")
-		embed = discord.Embed(description=f"## {emoji_error}  BoukiBot part en maintenance !",color=discord.Color.red())
+		embed = discord.Embed(description=f"## {emoji_error}  {nom_bot} part temporairement !",color=discord.Color.red())
 		embed.add_field(name="\n🛠 Statut", value="Hors ligne", inline=True)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 
 		await channel.send(embed=embed)
 		print(f"Début de la maintenance.")
@@ -2793,11 +2794,11 @@ async def on_message(message):
 	
 	
 	elif command in ["stop"]:
-		channel = bot.get_channel(channelBoukiBot)
+		channel = bot.get_channel(channelBot)
 		await channel.send("-# <@&1321073676946243616>")
-		embed = discord.Embed(description=f"## 🎉  BoukiBot est de retour !", color=discord.Color.green())
+		embed = discord.Embed(description=f"## 🎉  {nom_bot} est de retour !", color=discord.Color.green())
 		embed.add_field(name="\n🛠 Statut", value="En ligne", inline=True)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 
 		await channel.send(embed=embed)
 		print(f"Fin de la maintenance.")
@@ -2805,14 +2806,14 @@ async def on_message(message):
 		channel = bot.get_channel(log_channel)
 		await channel.send("Message posté")
 		
-	elif command in ["annonce"]:
-		channel = bot.get_channel(channelBoukiBot)
+	elif command in ["maintenance"]:
+		channel = bot.get_channel(channelBot)
 		await channel.send("-# <@&1321073676946243616>")
 		embed=discord.Embed(description="## Maintenance de <@1318161613202653194> <t:1736272800:R>", color=discord.Color.blue())
 		embed.add_field(name="", value="**Revenez ici dans quelques temps nous enverrons un message ici quand le Bot sera mis à jour.**", inline=False)
 		embed.add_field(name="** **", value="Fin prévue de la maintenance : **environ le <t:1736280000:F>**", inline=False)
 		embed.add_field(name="", value="-# Envie de recevoir les notifications des prochaines maintenances ?\n-# Prenez le rôle dans <#1298357497916035184> !", inline=False)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		
 		await channel.send(embed=embed)
 		print(f"Annonce de la maintenance.")
@@ -2821,19 +2822,19 @@ async def on_message(message):
 		await channel.send("Message posté")
 		
 	elif command in ["post"]:
-		channel = bot.get_channel(channelBoukiBot)
+		channel = bot.get_channel(channelBot)
 		await channel.send("-# <@&1321073676946243616>")
 		embed=discord.Embed(description="# Mise en arrêt temporaire", color=discord.Color.blue())
-		embed.add_field(name="", value="**Le Bot sera éteint demain à partir d'environ 7h20 jusqu'au soir vers 18h pour des raisons personnelles je vous pris de m'excuser une nouvelle fois.**", inline=False)
+		embed.add_field(name="", value="**Le Bot sera éteint aujoud'hui à partir d'environ 9h40 (<t:1737189600:R>) jusqu'a environ 12h (<t:1737198000:R>) pour cause de réunion webradio je m'en excuse d'avance.**", inline=False)
 		embed.add_field(name="", value="-# Envie de recevoir les notifications des prochains posts ?\n-# Prenez le rôle dans <#1298357497916035184> !", inline=False)
-		embed.set_footer(text=f"BoukiBot | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		
 		await channel.send(embed=embed)
 		
-		print(f"Post posté.")
+		print(f"Message posté.")
 		
 		channel = bot.get_channel(log_channel)
-		await channel.send("Message posté")
+		await channel.send("Message posté.")
 	
 	await bot.process_commands(message)
 
