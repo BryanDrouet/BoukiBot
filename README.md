@@ -27,5 +27,4 @@ Le tuto arrive bientôt !
 
 ---
 
-Creative Commons Attribution 4.0 International (CC BY 4.0)
-Copyright © 2025 Bryan Drouet
+BoukiBot, Bot d'économie Discord du serveur Boukistan - RP communautaire © 2025 by Bryan Drouet is licensed under CC BY 4.0 
