@@ -6,7 +6,7 @@ from babel.dates import format_datetime
 APPLICATION_ID = "IdBot"
 token = "Token"
 emoji_worked = "✅"
-emoji_error = "❌"  #Officiel
+emoji_error = "❌"
 channelBot = IdChannel
 log_channel = IdChannel
 BOT_PREFIX = "+"
