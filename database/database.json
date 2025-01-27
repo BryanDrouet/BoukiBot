@@ -86,7 +86,7 @@
                 "Une meprise publique vous oblige a perdre"
             ],
             "min_lose_amount_percentage": 2,
-            "max_lose_amount_percentage": 2
+            "max_lose_amount_percentage": 3
         },
         {
             "name": "crime",
@@ -159,7 +159,7 @@
                 "La cible se revele etre un agent infiltre, vous perdez"
             ],
             "min_lose_amount_percentage": 2,
-            "max_lose_amount_percentage": 2
+            "max_lose_amount_percentage": 3
         },
         {
             "name": "work",
@@ -347,7 +347,7 @@
                 "Un environnement hostile vous paralyse et vous perdez"
             ],
             "min_lose_amount_percentage": 2,
-            "max_lose_amount_percentage": 2
+            "max_lose_amount_percentage": 3
         }
     ],
     "symbols": [
