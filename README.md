@@ -23,6 +23,19 @@ Merci de modifier le fichier `config.py` pour l'adapter à vos besoins.
 Pour lancer l'application, il vous suffit d'exécuter le fichier `start.bat`.  
 Une fois l'application lancée, choisissez le bot `main.py` ou un autre bot que vous avez chez vous, cela fonctionnera de la même manière.
 
+## À venir
+La fonctionnalité de vente d'items entre particuliers est en cours de développement. Le système d'appartenance à une personne est déjà en place.
+La fonctionnalité de sondages avec les paramètres suivants est également en cours de développement :
+- Titre du sondage
+- Salon de publication du sondage
+- Rôle nécessaire pour voter
+- Ancienneté nécessaire pour voter
+- Début automatique du sondage
+- Fin automatique du sondage
+- Différents choix de votes
+- Réponses uniques, multiples ou personnalisées
+- Anonymat ou non
+
 ---
 
 BoukiBot, Bot d'économie Discord du serveur Boukistan - RP communautaire © 2025 by Bryan Drouet is licensed under CC BY 4.0 
