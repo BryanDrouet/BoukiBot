@@ -18,10 +18,10 @@ Ce projet est sous licence **Creative Commons Attribution 4.0 International (CC 
 
 Pour consulter les termes complets de la licence : [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) et [licence](https://github.com/BryanDrouet/BoukiBot/blob/main/licence).
 
-## A modifier
-Merci de modifier le fichier `config.py` afin de correspondre a vos besoins.
-
-Le tuto arrive bientôt !
+## À faire avant utilisation
+Merci de modifier le fichier `config.py` pour l'adapter à vos besoins.  
+Pour lancer l'application, il vous suffit d'exécuter le fichier `start.bat`.  
+Une fois l'application lancée, choisissez le bot `main.py` ou un autre bot que vous avez chez vous, cela fonctionnera de la même manière.
 
 ---
 
