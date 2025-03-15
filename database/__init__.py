@@ -1,25 +1,19 @@
-import os, sys, json, time, random, math, calendar, datetime, discord, asyncio
+import os, json, random, math, calendar, datetime, discord, asyncio, logging
 from datetime import timedelta
 from game_libs.blackjack import blackjack_discord_implementation
 from game_libs.roulette import roulette_discord_implementation
 from babel.dates import format_datetime
+from config import *
 
+logger = logging.getLogger(f"{nom_bot}")
+logger.setLevel(logging.INFO)
 
-emoji_worked = "✅"
-emoji_error = "❌"
-nom_bot = "BotPersonnalisé"
-
-current_time = format_datetime(
-	datetime.datetime.now(),
-	format="d MMMM y 'à' HH:mm",
-	locale="fr_FR"
-)
-
-class pythonboat_database_handler:	
-	# always called when imported in main.py
+class pythonboat_database_handler:    
 	def __init__(self, client):
-		self.currency_symbol = "🪙"
-		self.pathToJson = "database/database.json"
+		self.currency_symbol = "<:Bouken:1318277611612278794>"  #Officiel
+		#self.currency_symbol = "<:Bouken:1321078198410412094>"  #Backup
+
+		self.pathToJson = "database\database.json"
 		self.client = client
 		# Variables internes
 		self.variable_dict = {
@@ -35,61 +29,87 @@ class pythonboat_database_handler:
 		self.discord_blue_rgb_code = discord.Color.from_rgb(3, 169, 244)
 		self.discord_success_rgb_code = discord.Color.from_rgb(102, 187, 106)
 
-		# check if file is created, else create it
+		# Vérifier si le fichier existe, sinon le créer avec des données par défaut
 		if not os.path.exists(self.pathToJson):
-			creating_file = open(self.pathToJson, "w")
-			# adding default json config into the file if creating new
-			# all the users will get created automatically in the function self.find_index_in_db()
-			# but for the different jobs etc the program needs configs for variables and symbols
-			creating_file.write("""{\n\t"userdata": [],
-										"variables":[
-											{"name":"slut","delay":0,"min_revenue":0,"max_revenue":0,"proba":0,"win_phrases":["Tu n'es pas sensé voir ça... Ping le staff","Tu n'es pas sensé voir ça... Ping le staff"],"lose_phrases":["Mec... Arrete","le staff te l'avait dit..."],"min_lose_amount_percentage":2,"max_lose_amount_percentage":5},
-											{"name":"crime","delay":60,"min_revenue":0,"max_revenue":0,"proba":30,"win_phrases":["Tu n'es pas sensé voir ça... Ping le staff","Tu n'es pas sensé voir ça... Ping le staff"],"lose_phrases":["RATIO","Tu casses, tu répares"],"min_lose_amount_percentage":100,"max_lose_amount_percentage":200},
-											{"name":"work","delay":10,"min_revenue":50,"max_revenue":200,"win_phrases":["Tu n'es peut etre plus un chaummeur.","Tu as fait la manche... Et ça marche!"]},
-											{"name":"rob","delay":0,"proba":0,"min_gain_amount_percentage":0,"max_gain_amount_percentage":0,"min_lose_amount_percentage":100,"max_lose_amount_percentage":200,"win_phrases":["Tu n'es pas sensé voir ça... Ping le staff"],"lose_phrases":["RATIOO"]}],
-											{"name":"adventure","delay":60,"min_revenue":0,"max_revenue":0,"proba":30,"win_phrases":["Tu n'es pas sensé voir ça... Ping le staff","Tu n'es pas sensé voir ça... Ping le staff"],"lose_phrases":["RATIO","Tu casses, tu répares"],"min_lose_amount_percentage":100,"max_lose_amount_percentage":200},
-										"symbols": [
-											{"name":"currency_symbol","symbol_emoji":":dollar:"}
-										],
-										"items": [
-											{}
-										],
-										"income_roles": [
-											{}
-										]
-										\n}""")
-			creating_file.close()
+			try:
+				with open(self.pathToJson, "w") as creating_file:
+					# Ajouter la configuration par défaut en JSON
+					creating_file.write("""{
+						"userdata": [],
+						"variables": [
+							{"name": "slut", "delay": 0, "min_revenue": 0, "max_revenue": 0, "proba": 0, 
+							"win_phrases": ["Tu n'es pas sensé voir ça... Ping le staff", "Tu n'es pas sensé voir ça... Ping le staff"],
+							"lose_phrases": ["Mec... Arrete", "le staff te l'avait dit..."], "min_lose_amount_percentage": 2, 
+							"max_lose_amount_percentage": 5},
+							{"name": "crime", "delay": 60, "min_revenue": 0, "max_revenue": 0, "proba": 30, 
+							"win_phrases": ["Tu n'es pas sensé voir ça... Ping le staff", "Tu n'es pas sensé voir ça... Ping le staff"],
+							"lose_phrases": ["RATIO", "Tu casses, tu répares"], "min_lose_amount_percentage": 100, 
+							"max_lose_amount_percentage": 200},
+							{"name": "work", "delay": 10, "min_revenue": 50, "max_revenue": 200, 
+							"win_phrases": ["Tu n'es peut etre plus un chaummeur.", "Tu as fait la manche... Et ça marche!"]},
+							{"name": "rob", "delay": 0, "proba": 0, "min_gain_amount_percentage": 0, "max_gain_amount_percentage": 0, 
+							"min_lose_amount_percentage": 100, "max_lose_amount_percentage": 200, 
+							"win_phrases": ["Tu n'es pas sensé voir ça... Ping le staff"], "lose_phrases": ["RATIOO"]},
+							{"name": "adventure", "delay": 60, "min_revenue": 0, "max_revenue": 0, "proba": 30, 
+							"win_phrases": ["Tu n'es pas sensé voir ça... Ping le staff", "Tu n'es pas sensé voir ça... Ping le staff"], 
+							"lose_phrases": ["RATIO", "Tu casses, tu répares"], 
+							"min_lose_amount_percentage": 100, "max_lose_amount_percentage": 200}
+						],
+						"symbols": [{"name": "currency_symbol", "symbol_emoji": ":dollar:"}],
+						"items": [{}],
+						"income_roles": [{}]
+					}""")
+				logger.info("Le fichier 'database.json' a été créé avec les paramètres par défaut.")
+			except Exception as e:
+				logger.info(f"Erreur lors de la création du fichier : {str(e)}")
 
-	# if we handle a already created file, we need certain variables
 	async def check_json(self):
-		temp_json_opening = open(self.pathToJson, "r")
-		temp_json_content = json.load(temp_json_opening)
-		"""
-		possibly to add :
-			improve the error system, raising specific errors with a "error_info"
-			for example : "userdata missing", or "slut missing", or even "slut min_revenue missing"
-		"""
 		try:
+			with open(self.pathToJson, "r") as temp_json_opening:
+				temp_json_content = json.load(temp_json_opening)
+			
+			# Check if necessary keys exist in the JSON content
+			if "userdata" not in temp_json_content:
+				return "error: userdata missing"
+			if "variables" not in temp_json_content:
+				return "error: variables missing"
+			if "symbols" not in temp_json_content or len(temp_json_content["symbols"]) == 0:
+				return "error: symbols missing"
+			if "items" not in temp_json_content:
+				return "error: items missing"
+			if "income_roles" not in temp_json_content:
+				return "error: income_roles missing"
+			
 			check_content = temp_json_content
 			# userdata space
 			userdata = check_content["userdata"]
+			
 			# variables
 			variables = check_content["variables"]
-			slut = variables[self.variable_dict["slut"]]
-			crime = variables[self.variable_dict["crime"]]
-			work = variables[self.variable_dict["work"]]
-			rob = variables[self.variable_dict["rob"]]
-			adventure = variables[self.variable_dict["adventure"]]
+			slut = variables.get(self.variable_dict["slut"])
+			crime = variables.get(self.variable_dict["crime"])
+			work = variables.get(self.variable_dict["work"])
+			rob = variables.get(self.variable_dict["rob"])
+			adventure = variables.get(self.variable_dict["adventure"])
+
+			# Check if any variable is missing
+			if not all([slut, crime, work, rob, adventure]):
+				return "error: missing variables"
+
 			# symbol
 			currency_symbol = check_content["symbols"][0]
 			items = check_content["items"]
 			roles = check_content["income_roles"]
 
-			# didnt fail, so we're good
-			temp_json_opening.close()
+			# didn't fail, so we're good
+			return "success"
+
+		except json.JSONDecodeError:
+			return "error: invalid JSON format"
+		except KeyError as e:
+			return f"error: missing key {str(e)}"
 		except Exception as e:
-			# something is missing, inform client
-			return "error"
+			return f"error: {str(e)}"
 
 	"""
 	GLOBAL FUNCTIONS
@@ -107,7 +127,7 @@ class pythonboat_database_handler:
 		user_to_find = int(user_to_find)
 		for i in range(len(data_to_search)):
 			if data_to_search[i]["user_id"] == user_to_find:
-				# print("\nfound user\n")
+				# logger.info("\nfound user\n")
 				return int(i), "none"
 
 		# in this case, this isnt a user which isnt yet registrated
@@ -116,7 +136,7 @@ class pythonboat_database_handler:
 		if fail_safe:
 			return 0, "error"
 
-		print("\ncreating user\n")
+		logger.info("\ncreating user\n")
 		# we did NOT find him, which means he doesn't exist yet
 		# so we automatically create him
 		# edit on 13.02.24: this is fucking useless WTF
@@ -228,7 +248,7 @@ class pythonboat_database_handler:
 		# start it
 		startInstance = roulette_discord_implementation(bot, channel, self.currency_symbol)
 		roulettePlay, multiplicator = await startInstance.play(bot, channel, username, user_pfp, bet, space, mention)
-		# print("done with roulette call")
+		# logger.info("done with roulette call")
 		# roulettePlay will be 1 for won, 0 for lost
 		if roulettePlay:
 			json_user_content["cash"] += (bet * multiplicator) - bet
@@ -240,7 +260,7 @@ class pythonboat_database_handler:
 		# overwrite, end
 		json_content["userdata"][user_index] = json_user_content
 		self.overwrite_json(json_content)
-		# print("FINISHED writing")
+		# logger.info("FINISHED writing")
 		return "success", "success"
 	
 	#
@@ -312,7 +332,7 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱ ️Vous pourrez redevenir une catin dans {delay_remaining}.",color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return "success", "success"
 		# else:
@@ -340,7 +360,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{lose_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(loss))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			json_user_content["cash"] -= loss
 			# update last slut time
@@ -361,7 +381,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			json_user_content["cash"] += gain
 			# update last slut time
@@ -433,7 +453,7 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱ Vous pourrez refaire un crime dans {delay_remaining}.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -448,7 +468,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			json_user_content["cash"] += gain
 		else:
@@ -462,7 +482,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{lose_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(loss))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			json_user_content["cash"] -= loss
 	
@@ -546,7 +566,7 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱️ Vous pourrez faire une nouvelle aventure dans {delay_remaining}.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -566,7 +586,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			json_user_content["cash"] += gain
 			# mise à jour de last_adventure
@@ -589,7 +609,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{lose_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(loss))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			json_user_content["cash"] -= loss
 			# mise à jour de last_adventure
@@ -666,11 +686,11 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱ ️Vous pourrez travailler dans {delay_remaining}.",color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return "success", "success"
 		# else:
-			# print("he can do it")
+			# logger.info("he can do it")
 
 		"""
 		ACTUAL FUNCTION
@@ -684,7 +704,7 @@ class pythonboat_database_handler:
 		color = self.discord_success_rgb_code
 		embed = discord.Embed(description=f"{win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**",color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 		json_user_content["cash"] += gain
 		# update last slut time
@@ -733,7 +753,7 @@ class pythonboat_database_handler:
 			color = self.discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Vous avez atteint la limite de 3 vols cette semaine.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return "success", "success"
 		
@@ -774,7 +794,7 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱ ️Vous pourrez de nouveau voler quelqu'un dans {delay_remaining}.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -789,7 +809,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide  `<user>`.\n\nUsage:\n`rob <user>`",
 								  color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -797,7 +817,7 @@ class pythonboat_database_handler:
 			color = self.discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Vous ne pouvez pas vous voler vous même !", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -808,7 +828,7 @@ class pythonboat_database_handler:
 			color = self.discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  La cible n'a pas d'argent liquide à voler.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -828,7 +848,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{emoji_error}  {lose_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(loss))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			json_user_content["last_rob"] = str(now)
 			json_content["userdata"][user_index] = json_user_content
@@ -846,7 +866,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{emoji_worked}  {win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 			await channel.send(embed=embed)
 			json_user_content["cash"] += gain
 			robbed_user_data["cash"] -= gain
@@ -865,10 +885,10 @@ class pythonboat_database_handler:
 
 	async def balance(self, user, channel, userbal_to_check, username_to_check, userpfp_to_check, not_done):
 		# load json
-		# print(not_done)
+		# logger.info(not_done)
 		if not_done: await asyncio.sleep(1)
 		json_file = open(self.pathToJson, "r")
-		# print("opened json")
+		# logger.info("opened json")
 		json_content = json.load(json_file)
 		user_index, new_data = self.find_index_in_db(json_content["userdata"], user)
 		# check if user exists
@@ -890,7 +910,7 @@ class pythonboat_database_handler:
 		embed.add_field(name="**Banque**", value=f"{str(self.currency_symbol)} {check_bank}", inline=True)
 		embed.add_field(name="**Total**", value=f"{str(self.currency_symbol)} {check_bal}", inline=True)
 		embed.set_author(name=username_to_check, icon_url=userpfp_to_check)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		self.overwrite_json(json_content)
@@ -923,7 +943,7 @@ class pythonboat_database_handler:
 		else:
 			amount = int(amount)
 			if amount >= user_cash:
-				return "error", f" Vous n’avez pas beaucoup d’argent à déposer. Vous avez actuellement {str(self.currency_symbol)} {'{:,}'.format(user_cash)} en main."
+				return "error", f" Vous n’avez pas autant d’argent à déposer. Vous avez actuellement {str(self.currency_symbol)} {'{:,}'.format(user_cash)} en main."
 
 		json_user_content["cash"] -= amount
 		json_user_content["bank"] += amount
@@ -933,7 +953,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez déposé {str(self.currency_symbol)} {'{:,}'.format(int(amount))} dans votre banque !",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -973,6 +993,9 @@ class pythonboat_database_handler:
 		# Vérifier si l'utilisateur a le rôle "M・Mafieux" et multiplier la limite par 3
 		if "M・Mafieux" in [role.name for role in member.roles]:
 			DAILY_WITHDRAW_LIMIT *= 3  # Multiplie la limite par 3
+		
+		if "BDB・Banque Du Boukistan" in [role.name for role in member.roles]:
+			DAILY_WITHDRAW_LIMIT *= 6
 	
 		# Vérifier les retraits quotidiens
 		current_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -1015,7 +1038,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked} Vous avez retiré {str(self.currency_symbol)} {'{:,}'.format(amount)} de votre banque !",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 	
 		# Sauvegarder les données
@@ -1062,7 +1085,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  {recept_uname.mention} a reçu {str(self.currency_symbol)} {'{:,}'.format(int(amount))}",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1104,9 +1127,9 @@ class pythonboat_database_handler:
 		
 		# basically minus because we go reverse, else we change the whole
 		# list and then we cant work per index anymore !
-		# print(pops)
+		# logger.info(pops)
 		pops.reverse()
-		# print(pops)
+		# logger.info(pops)
 		
 		for index in range(len(pops)):
 			
@@ -1156,9 +1179,9 @@ class pythonboat_database_handler:
 			elif mode_type == "-bank":
 				all_bal.append(int(json_content["userdata"][i]["bank"]))
 			else:  # elif mode_type == "-total":
-				# print(json_content["userdata"][i]["cash"] + json_content["userdata"][i]["bank"])
+				# logger.info(json_content["userdata"][i]["cash"] + json_content["userdata"][i]["bank"])
 				all_bal.append(int(json_content["userdata"][i]["cash"] + json_content["userdata"][i]["bank"]))
-		# print(all_bal)
+		# logger.info(all_bal)
 		# so, data is set, now sort
 
 		i = -1
@@ -1207,7 +1230,7 @@ class pythonboat_database_handler:
 			# Update the username
 			all_users[i] = actual_name
 		try:
-			print("Place de l'utilisateur ", user_lb_position)
+			logger.info("Place de l'utilisateur : %d", user_lb_position)
 		except Exception:
 			user_lb_position = 10000  # did not find him
 
@@ -1270,7 +1293,7 @@ class pythonboat_database_handler:
 			pos_name = "rd"
 		else:
 			pos_name = ""
-		embed.set_footer(text=f"{nom_bot} | {current_time} | Page {page_number}/{page_count}  •  Votre place : {user_lb_position}{pos_name}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | Page {page_number}/{page_count}  •  Votre place : {user_lb_position}{pos_name}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		return "success", "success"
@@ -1345,7 +1368,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez ajouté {str(self.currency_symbol)} {'{:,}'.format(int(amount))} a la banque de {recept_uname.mention}",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1377,7 +1400,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez retirés {str(self.currency_symbol)} {'{:,}'.format(int(amount))} de la balance de {recept_uname.mention} {mode}",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1415,7 +1438,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Variable '{variable_name}' modifiée dans '{module_name}'\nAvant: '{old_value}'. Après: {new_value}",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1449,7 +1472,7 @@ class pythonboat_database_handler:
 		color = self.discord_success_rgb_code
 		embed = discord.Embed(description=f"{emoji_worked}  Emoji modifié de '{old_value}' à '{new_emoji_name}'", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1479,7 +1502,7 @@ class pythonboat_database_handler:
 		color = self.discord_success_rgb_code
 		embed = discord.Embed(description=f"{emoji_worked}  Revenu réinitialisé à　`{new_income_reset}`", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time} | info : si vrai (par défaut), le salaire quotidien est réinitialisé tous les jours et ne s’accumule pas.", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | info : si vrai (par défaut), le salaire quotidien est réinitialisé tous les jours et ne s’accumule pas.", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1509,10 +1532,10 @@ class pythonboat_database_handler:
 
 		# calculate item duration
 		today = datetime.datetime.now()
-		# print(today)
+		# logger.info(today)
 		expiration_date = today + timedelta(days=duration)
 
-		# print("expiration date : ", expiration_date)
+		# logger.info("expiration date : ", expiration_date)
 
 		json_items.append({
 			"name": item_name,
@@ -1580,7 +1603,7 @@ class pythonboat_database_handler:
 							user_content[i]["items"].pop(ii)
 							break
 				except Exception as e:
-					print(e)
+					logger.info(e)
 
 		# overwrite, end
 		json_content["items"] = json_items
@@ -1628,7 +1651,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez retiré {'{:,}'.format(int(amount_removed))} {item_name} de {recept_uname.mention}.",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1695,7 +1718,7 @@ class pythonboat_database_handler:
 					if int(req_roles[i]) not in user_roles:
 						return "error", f"{emoji_error}  L’utilisateur ne semble pas avoir tous les rôles requis."
 		except Exception as e:
-			print("1", e)
+			logger.info("1", e)
 			return "error", f"{emoji_error}  Erreur inattendue"
 		
 		# 2. check excluded roles - meaning roles with which you CANT buy
@@ -1707,7 +1730,7 @@ class pythonboat_database_handler:
 					if int(excluded_roles[i]) in user_roles:
 						return "error", f"{emoji_error} L’utilisateur possède un rôle exclu (id: {excluded_roles[i]})."
 		except Exception as e:
-			print("2", e)
+			logger.info("2", e)
 			return "error", f"{emoji_error}  Erreur inattendue."
 
 		### BEFORE update, "check rem roles" and "check give roles" was located here. it seems that
@@ -1802,14 +1825,14 @@ class pythonboat_database_handler:
 						continue
 
 		except Exception as e:
-			print("3", e)
+			logger.info("3", e)
 			return "error", f"{emoji_error}  Erreur inattendue"
 		color = self.discord_blue_rgb_code
 		embed = discord.Embed(
 			description=f"Vous avez acheté {amount} {item_display_name} pour {str(self.currency_symbol)} **{'{:,}'.format(int(sum_price))}**",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time} | {reply_message}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | {reply_message}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1887,7 +1910,7 @@ class pythonboat_database_handler:
 				description=f"{emoji_worked}  {recept_uname.mention} a reçu {'{:,}'.format(int(amount))} {item_name}!",
 				color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1946,7 +1969,7 @@ class pythonboat_database_handler:
 				if not worked:
 					return "error", f"{emoji_error}  Vous n’avez pas de cet item à donner"
 		except Exception as e:
-			print(e)
+			logger.info(e)
 			return "error", f"{emoji_error}  Erreur inconnue, demandez de l'aide à un membre du staff ou à @Bryan_Drouet."
 
 
@@ -1956,7 +1979,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez utilisés {'{:,}'.format(int(amount))} {item_name} !",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2021,7 +2044,7 @@ class pythonboat_database_handler:
 				# to get the display name
 				json_items = json_content["items"]
 				for ii in range(len(json_items)):
-					# print("checking item ", json_items[ii]["name"])
+					# logger.info("checking item ", json_items[ii]["name"])
 					if json_items[ii]["name"] == items_selection[i][0]:
 						item_index = ii
 						break
@@ -2043,7 +2066,7 @@ class pythonboat_database_handler:
 			page_number = 1
 
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time} | Page {page_number} sur {page_count}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | Page {page_number} sur {page_count}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		sent_embed = await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2081,7 +2104,7 @@ class pythonboat_database_handler:
 							vendeur_name = vendeur.name  # Récupérer le pseudo de l'utilisateur
 							item_line += f" | Vendeur: {vendeur_name}"  # Ajouter le pseudo du vendeur
 						except Exception as e:
-							print(f"Erreur lors de la récupération du vendeur: {e}")
+							logger.info(f"Erreur lors de la récupération du vendeur: {e}")
 							item_line += f" | Vendeur: inconnu"  # Si un problème survient, afficher "inconnu"
 
 					# Ajouter le prix de l'item
@@ -2098,7 +2121,7 @@ class pythonboat_database_handler:
 						current = 0
 	
 				except Exception as e:
-					print(f"Erreur lors de la génération du catalogue: {e}")  # Pour déboguer
+					logger.info(f"Erreur lors de la génération du catalogue: {e}")  # Pour déboguer
 					await channel.send("Erreur de compatibilité, demandez de l'aide à un membre du staff ou à @Bryan_Drouet.")
 					return "success", "success"
 
@@ -2151,7 +2174,7 @@ class pythonboat_database_handler:
 							role = discord.utils.get(server_object.roles, id=int(items[item_index]["excluded_roles"][ii]))
 							excluded_roles += f"{str(role.mention)} "
 				except Exception as e:
-					print(f"Erreur pour les rôles requis: {e} - (problème de compatibilité).")
+					logger.info(f"Erreur pour les rôles requis: {e} - (problème de compatibilité).")
 					excluded_roles += "none"
 
 				give_roles = ""
@@ -2210,7 +2233,7 @@ class pythonboat_database_handler:
 						except:
 							img_prob = False
 				except Exception as error_code:
-					print(error_code)
+					logger.info(error_code)
 					catalog_report +=  f"Nom court: <{items[item_index]['name']}>\n" \
 									  f"Prix: {items[item_index]['price']}\n" \
 									  f"Description: {items[item_index]['description']}\n" \
@@ -2226,7 +2249,7 @@ class pythonboat_database_handler:
 					return "success", "success"
 
 				# embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {current_time} | AVERTISSEMENT : l’URL pour l'image n’a pas été trouvée. Celle-ci pourrait être déplacée\nVeuillez consulter le fichier json manuellement ou demandez de l'aide à un membre du staff ou à @Bryan_Drouet.", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584") if img_prob else embed.set_footer(text=f"{nom_bot} | {current_time} | Info : toujours utiliser le nom court pour les commandes.", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | AVERTISSEMENT : l’URL pour l'image n’a pas été trouvée. Celle-ci pourrait être déplacée\nVeuillez consulter le fichier json manuellement ou demandez de l'aide à un membre du staff ou à @Bryan_Drouet.", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584") if img_prob else embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | Info : toujours utiliser le nom court pour les commandes.", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				sent_embed = await channel.send(embed=embed)
 				return "success", "success"
 		for i in range(len(catalog_final)):
@@ -2265,7 +2288,7 @@ class pythonboat_database_handler:
 			description=f"Rôle a salaire ajouté\nrole_id : {income_role_id}, salaire : {str(self.currency_symbol)} **{'{:,}'.format(int(income))}**",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2459,8 +2482,7 @@ class pythonboat_database_handler:
 								min_rem = f"0{min_rem_raw}" if min_rem_raw < 10 else min_rem_raw
 								hours_remaining = f"{hour_rem} heures et {min_rem} minutes"
 						except Exception as error_code:
-							print(error_code)
-							await channel.send("Mise en place...")
+							logger.info(error_code)
 							json_content["symbols"][0]["global_collect"] = str(now)
 							new_day = True
 
@@ -2474,7 +2496,7 @@ class pythonboat_database_handler:
 						json_content["symbols"][0]["global_collect"] = str(now)
 
 					except Exception as error_code:  # he didn't retrieve a salary yet
-						print(error_code)
+						logger.info(error_code)
 						await channel.send("création de votre première entrée...")
 						json_income_roles[role_index]["last_single_called"][str(user)] = str(now)
 						income_total += json_income_roles[role_index]["role_income"]
@@ -2495,12 +2517,12 @@ class pythonboat_database_handler:
 				role_names = "\n- **" + "**\n- **".join([role.name for role in roles_received]) + "**"
 				embed = discord.Embed(description=f"Vous avez reçu votre salaire de {self.currency_symbol} **{'{:,}'.format(int(income_total))}** de {received_instances} rôles différents :{role_names}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 			else:
 				embed = discord.Embed(description=f"**Vous avez déjà récolté votre salaire !**\nReset dans : **{hours_remaining}.**", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 				await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2546,7 +2568,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez retiré {self.currency_symbol} {'{:,}'.format(int(amount_removed))} d'un total de {'{:,}'.format(int(len(role.members)))} utilisateurs ayant ce rôle !",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2579,7 +2601,7 @@ class pythonboat_database_handler:
 		embed.add_field(name=f"**Total en banque**", value=f"{self.currency_symbol} {'{:,}'.format(int(total_bank))}", inline=False)
 		embed.add_field(name=f"**Total**", value=f"{self.currency_symbol} {'{:,}'.format(int(total_total))}", inline=False)
 		embed.set_author(name="Statistiques économiques", icon_url="https://upload.wikimedia.org/wikipedia/commons/5/5e/Map_symbol_museum_02.png")
-		embed.set_footer(text=f"{nom_bot} | {current_time}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
 		await channel.send(embed=embed)
 
 		return "success", "success"
