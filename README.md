@@ -20,8 +20,10 @@ Pour consulter les termes complets de la licence : [CC BY 4.0](https://creativec
 
 ## A modifier
 
-- `main.py` - Lignes 6 à 13, 22 & 265 à 268 (Nom des rôles)
-- `database\__init__.py` - Lignes 8 à 10 & 20
+- `main.py` - Lignes 6 à 21
+- `blackjack\__init__.py` - Ligne 4
+- `roulette\__init__.py` - Ligne 4
+- `database\__init__.py` - Lignes 7, 9, 10 et 17
 
 Le tuto arrive bientôt !
 
