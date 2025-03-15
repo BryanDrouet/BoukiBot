@@ -26,15 +26,15 @@ Une fois l'application lancée, choisissez le bot `main.py` ou un autre bot que 
 ## À venir
 La fonctionnalité de vente d'items entre particuliers est en cours de développement. Le système d'appartenance à une personne est déjà en place.
 La fonctionnalité de sondages avec les paramètres suivants est également en cours de développement :
-- Titre du sondage
-- Salon de publication du sondage
-- Rôle nécessaire pour voter
-- Ancienneté nécessaire pour voter
-- Début automatique du sondage
-- Fin automatique du sondage
-- Différents choix de votes
-- Réponses uniques, multiples ou personnalisées
-- Anonymat ou non
+- Titre du sondage,
+- Salon de publication du sondage,
+- Rôle nécessaire pour voter,
+- Ancienneté nécessaire pour voter,
+- Début automatique du sondage,
+- Fin automatique du sondage,
+- Différents choix de votes,
+- Réponses uniques, multiples ou personnalisées et
+- Anonymat ou non.
 
 ---
 
