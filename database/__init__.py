@@ -10,6 +10,7 @@ logger.setLevel(logging.INFO)
 
 class pythonboat_database_handler:    
 	def __init__(self, client):
+		self.currency_symbol = monnaie
 		self.pathToJson = "database\database.json"
 		self.client = client
 		# Variables internes
