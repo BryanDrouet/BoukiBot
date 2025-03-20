@@ -10,9 +10,6 @@ logger.setLevel(logging.INFO)
 
 class pythonboat_database_handler:    
 	def __init__(self, client):
-		self.currency_symbol = "<:Bouken:1318277611612278794>"  #Officiel
-		#self.currency_symbol = "<:Bouken:1321078198410412094>"  #Backup
-
 		self.pathToJson = "database\database.json"
 		self.client = client
 		# Variables internes
@@ -991,10 +988,10 @@ class pythonboat_database_handler:
 			return "error", f"{emoji_error} L'utilisateur spécifié n'est pas un membre valide."
 	
 		# Vérifier si l'utilisateur a le rôle "M・Mafieux" et multiplier la limite par 3
-		if "M・Mafieux" in [role.name for role in member.roles]:
-			DAILY_WITHDRAW_LIMIT *= 3  # Multiplie la limite par 3
+		if Mafieux in [role.name for role in member.roles]:
+			DAILY_WITHDRAW_LIMIT *= 3
 		
-		if "BDB・Banque Du Boukistan" in [role.name for role in member.roles]:
+		if Banque in [role.name for role in member.roles]:
 			DAILY_WITHDRAW_LIMIT *= 6
 	
 		# Vérifier les retraits quotidiens
