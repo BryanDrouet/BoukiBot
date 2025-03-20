@@ -243,16 +243,17 @@ async def on_message(message):
 	username = str(message.author)
 	nickname = str(message.author.display_name)
 	user_roles = [randomvar.id for randomvar in message.author.roles]
+	roles = [role.name for role in message.author.roles]  # Liste des rôles sous forme de texte
+	matched_roles = [r for r in [Gerant, Mafieux, Banque] if r in roles]  # Liste des rôles trouvés
 
-	roles = [role.name for role in message.author.roles]
-	staff_request = "Non Staff"
-	for role_to_check in message.author.roles:
-		if f"{Gerant}" in roles and f"{Mafieux}" in roles: staff_request = f"{Gerant} et {Mafieux}"
-		elif f"{Gerant}" in roles: staff_request = f"{Gerant}"
-		elif f"{Mafieux}" in roles: staff_request = f"{Mafieux}"
-		elif f"{Banque}" in roles: staff_request = f"{Banque}"
-		if f"{Gerant}" in roles and f"{Banque}" in roles: staff_request = f"{Gerant} et {Banque}"
-	
+	if matched_roles:
+		if len(matched_roles) == 1:
+			staff_request = matched_roles[0]  # Un seul rôle
+		else:
+			staff_request = ", ".join(matched_roles[:-1]) + f" et {matched_roles[-1]}"  # Format correct pour plusieurs rôles
+	else:
+		staff_request = "Non Staff"
+
 	logger.info(f"\n\nCommande appelée avec les paramètres : {param}")
 	logger.info(f"   |   Message reçu le {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}")
 	logger.info(f"   |   Statut : {staff_request}")
