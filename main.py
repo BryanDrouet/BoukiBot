@@ -392,7 +392,7 @@ async def on_message(message):
 	# --------------
 
 	if command in ["slut"]:
-		if not (f"{Mafieux}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Mafieux in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Mafieux}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -419,7 +419,7 @@ async def on_message(message):
 	# -------------------
 	
 	if command in ["adventure", "aventure", "adv", "av"]:
-		if f"{Mafieux}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request:
+		if Mafieux in staff_request:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Cette commande n'est pas accessible aux {Mafieux}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -445,7 +445,7 @@ async def on_message(message):
 	# --------------
 
 	if command in ["crime"]:
-		if not (f"{Mafieux}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Mafieux in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Mafieux}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -492,7 +492,7 @@ async def on_message(message):
 	# --------------
 
 	if command in ["rob", "steal"]:
-		if not (f"{Mafieux}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Mafieux in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Mafieux}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -910,7 +910,7 @@ async def on_message(message):
 	# --------------
 
 	elif command == "add-money":
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -987,7 +987,7 @@ async def on_message(message):
 	# --------------
 
 	elif command == "remove-money":
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -1077,7 +1077,7 @@ async def on_message(message):
 	# --------------
 
 	elif command in ["change", "edit"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -1134,7 +1134,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["change-currency", "edit_currency"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -1170,7 +1170,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["set-income-reset", "change-income-reset"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -1219,7 +1219,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["create-item", "new-item", "item-create"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -1633,7 +1633,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["delete-item", "remove-item"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -1687,7 +1687,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["remove-user-item"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -1768,7 +1768,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["clean-leaderboard", "clean-lb"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -1915,7 +1915,7 @@ async def on_message(message):
 
 	elif command in ["give-item"]:
 		"""
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -2008,7 +2008,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["spawn-item"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -2263,7 +2263,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["add-income-role", "add-role-income"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -2334,7 +2334,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["remove-income-role", "delete-income-role", "remove-role-income", "delete-role-income"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -2391,7 +2391,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["remove-money-role", "remove-role-money"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -2482,7 +2482,7 @@ async def on_message(message):
 	# ---------------------------
 
 	elif command in ["update-income"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -2560,7 +2560,7 @@ async def on_message(message):
 	# ---------------------------
 	
 	elif command in ["start"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -2586,7 +2586,7 @@ async def on_message(message):
 			await send_error(channel)
 	
 	elif command in ["stop"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
@@ -2612,7 +2612,7 @@ async def on_message(message):
 			await send_error(channel)
 		
 	elif command in ["post"]:
-		if not (f"{Gerant}" in staff_request or f"{Gerant} et {Mafieux}" in staff_request):
+		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
