@@ -1,8 +1,15 @@
-import discord, json, locale, database, datetime, logging, sys, requests, os, asyncio
+import discord, json, locale, database, datetime, logging, sys, os
 from discord.ext.commands import Bot
 from babel.dates import format_datetime
 from datetime import datetime
 from config import *
+from announces import handle_command
+
+locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+discord_error_rgb_code = discord.Color.from_rgb(239, 83, 80)
+intents = discord.Intents.all()
+bot = Bot(command_prefix=BOT_PREFIX, intents=intents)
+db_handler = database.pythonboat_database_handler(bot)
 
 sys.stdout.reconfigure(encoding='utf-8')
 logger = logging.getLogger(f"{nom_bot}")
@@ -12,22 +19,57 @@ if not logger.handlers:
 	handler.setFormatter(logging.Formatter('%(message)s'))
 	logger.addHandler(handler)
 
-locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
-discord_error_rgb_code = discord.Color.from_rgb(239, 83, 80)
-intents = discord.Intents.all()
-bot = Bot(command_prefix=BOT_PREFIX, intents=intents)
-db_handler = database.pythonboat_database_handler(bot)
-
 os.makedirs("cache", exist_ok=True)
 log_filename = datetime.now().strftime("cache/logs_%Y-%m-%d_%H-%M-%S.txt")
 file_handler = logging.FileHandler(log_filename, encoding="utf-8")
 file_handler.setLevel(logging.INFO)
-file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-
+file_handler.setFormatter(logging.Formatter('%(levelname)s  |  %(asctime)s\n%(message)s\n\n'))
+logger = logging.getLogger(nom_bot)  # ou "discord_bot", selon ton code
+logger.setLevel(logging.INFO)
 if not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
     logger.addHandler(file_handler)
+discord_logger = logging.getLogger('discord')
+discord_logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in discord_logger.handlers):
+    discord_logger.addHandler(file_handler)
+gateway_logger = logging.getLogger('discord.gateway')
+gateway_logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in gateway_logger.handlers):
+    gateway_logger.addHandler(file_handler)
 
-def currency_symbol(self, test=False, value="unset"):
+'''
+@bot.tree.command(name="bank-userbalance", description="Affiche le solde du compte bancaire de l'utilisateur")
+async def balance(ctx):
+    await afficher_solde(ctx.message)
+
+@bot.tree.command(name="bank-interests", description="Vérifie si les intérêts ont été versés")
+async def interets(ctx):
+    await check_interets(ctx.message)
+
+@bot.tree.command(name="bank-closeaccount", description="Ferme le compte bancaire de l'utilisateur")
+async def fermer(ctx):
+    await fermer_compte(ctx.message)
+
+@bot.tree.command(name="bank-topaccount", description="Affiche le top 10 des comptes bancaires")
+async def top(ctx):
+    await top_comptes(ctx.message)
+
+@bot.tree.command(name="bank-createbusinessaccount", description="Crée un compte bancaire pour une entreprise")
+async def creer_entreprise_cmd(
+    ctx: discord.Interaction,
+    nom_entreprise: str  # Utilisation d'une option nommée pour le nom de l'entreprise
+):
+    await creer_entreprise(ctx.message, nom_entreprise)
+
+@bot.tree.command(name="bank-balanceusermentioned", description="Affiche le solde bancaire d'un utilisateur mentionné")
+async def solde(
+    ctx: discord.Interaction,
+    mentions: discord.User  # Annotation du type pour le paramètre 'mentions'
+):
+    await afficher_solde(ctx.message)
+'''
+
+def currency_symbol(self, test=False, value="unset", description=""):
 	self.currency_symbol = {monnaie}
 
 async def transfer_money_to_vendor(vendeur_id, amount):
@@ -101,27 +143,10 @@ async def send_embed(title, description, channel, color="default"):
 	return
 
 async def send_error(channel):
-	embed = discord.Embed(title="Erreur.", description="Erreur interne, demandez de l'aide à un membre du staff ou à <@598076783186935808>.")
-	embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+	embed = discord.Embed(title="Erreur.", description="Erreur interne, demandez de l'aide à un membre du staff ou à <@598076783186935808>.", color=discord.Color.red())
+	embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 	await channel.send(embed=embed)
 	return
-
-async def log_transaction(user, channel_id, change_type, amount, reason, before_balance, after_balance):
-		log_channel = bot.get_channel(log_channel)
-		if log_channel:
-			embed = discord.Embed(
-				title="🔔 Log de transaction",
-				description=f"**Utilisateur :** <@{user}>\n"
-							f"**Type :** {change_type}\n"
-							f"**Montant :** {amount}\n"
-							f"**Motif :** {reason}\n"
-							f"**Solde avant :** {before_balance}\n"
-							f"**Solde après :** {after_balance}\n"
-							f"**Channel :** <#{channel_id}>",
-				color=discord.Color.green()
-			)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
-			await log_channel.send(embed=embed)
 
 @bot.event
 async def on_ready():
@@ -145,7 +170,7 @@ async def on_ready():
 			description="",
 			color=discord.Color.blue()
 		)
-		embed.set_thumbnail(url="https://media.discordapp.net/attachments/707868018708840508/1318353739920183416/RP.png?ex=67620419&is=6760b299&hm=eb566e37869fd02b7a24fa39c8fb0489793ad7e21c9f1c146c0fdec3f3e6db0a&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_thumbnail(url=BOT_ICON)
 		embed.add_field(name="🛠 Statut", value="En ligne", inline=True)
 		embed.add_field(name="📋 Détails", value=f"{nom_bot} est là pour gérer l'économie du serveur.", inline=True)
 		embed.add_field(name="📜 Commandes synchronisées", value=f"{nb_commands}", inline=True)
@@ -162,9 +187,9 @@ async def on_ready():
 		await channel.send(embed=embed)
 		await bot.close()
 	
-	logger.info(f"\n✅ {bot.user} est connecté ! Synchronisation en cours...")
+	logger.info(f"✅ {bot.user} est connecté ! Synchronisation en cours...")
 	await bot.tree.sync()
-	logger.info("\n🔄 Commandes synchronisées avec Discord.")
+	logger.info("🔄 Commandes synchronisées avec Discord.")
 
 not_done = False
 @bot.event
@@ -248,7 +273,7 @@ async def on_message(message):
 	nickname = str(message.author.display_name)
 	user_roles = [randomvar.id for randomvar in message.author.roles]
 	roles = [role.name for role in message.author.roles]  # Liste des rôles sous forme de texte
-	matched_roles = [r for r in [Gerant, Mafieux, Banque] if r in roles]  # Liste des rôles trouvés
+	matched_roles = [r for r in [Gerant, Mafieux, Banque, JOs] if r in roles]  # Liste des rôles trouvés
 
 	if matched_roles:
 		if len(matched_roles) == 1:
@@ -258,10 +283,7 @@ async def on_message(message):
 	else:
 		staff_request = "Non Staff"
 
-	logger.info(f"\n\nCommande appelée avec les paramètres : {param}")
-	logger.info(f"   |   Message reçu le {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}")
-	logger.info(f"   |   Statut : {staff_request}")
-	logger.info(f"   |   Utilisateur : @{username} ({user})")
+	logger.info(f"Commande appelée avec les paramètres : {param}\n" f"   |   Message reçu le {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}\n" f"   |   Statut : {staff_request}\n" f"   |   Utilisateur : @{username} ({user})")
 
 	command = command[0]
 	
@@ -274,7 +296,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`blackjack <amount or all>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -291,14 +313,14 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`. Le pari doit être d’au moins 100.\n", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await channel.send(embed=embed)
 					return
 			except:
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`roulette <amount or all> <space>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		bet = str(bet)
@@ -310,7 +332,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{bj_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -329,7 +351,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`roulette <amount or all> <space>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 	
@@ -341,16 +363,16 @@ async def on_message(message):
 				bet = int(bet)
 				if bet < 100:
 					color = discord_error_rgb_code
-					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`. Le pari doit être d’au moins 100 Boukens.\n", color=color)
+					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`. Le pari doit être d’au moins 100 {nom_monnaie}s.\n", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await channel.send(embed=embed)
 					return
 			except:
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`roulette <amount or all> <space>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		bet = str(bet)
@@ -369,7 +391,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<space>`.\n\nUsage:\n`roulette <amount or all> <space>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 	
@@ -384,7 +406,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{roulette_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -400,7 +422,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Mafieux}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		else:
@@ -411,7 +433,7 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{slut_return}", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await channel.send(embed=embed)
 					return
 			except Exception as e:
@@ -427,7 +449,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Cette commande n'est pas accessible aux {Mafieux}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		else:
@@ -437,7 +459,7 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{adventure_return}", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await channel.send(embed=embed)
 					return
 			except Exception as e:
@@ -453,7 +475,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Mafieux}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		
@@ -464,7 +486,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{crime_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -483,7 +505,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{work_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -500,7 +522,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Mafieux}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		
@@ -508,7 +530,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`rob <user>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -521,7 +543,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{rob_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -541,7 +563,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `[user]`.\n\nUsage:\n`balance <user>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		else:
@@ -554,7 +576,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `[user]`.\n\nUsage:\n`balance <user>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -573,7 +595,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`deposit <amount or all>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -590,14 +612,14 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`deposit <amount or all>`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await channel.send(embed=embed)
 					return
 			except:
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`deposit <amount or all>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -609,7 +631,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{dep_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -625,7 +647,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`withdraw <amount or all>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -642,14 +664,14 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`withdraw <amount or all>`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await channel.send(embed=embed)
 					return
 			except:
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`withdraw <amount or all>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -661,7 +683,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{with_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -679,7 +701,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`give <member> <amount or all>`\nInfo : pour les items utilisez `give-item` !",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -695,7 +717,7 @@ async def on_message(message):
 				embed = discord.Embed(description=f"{emoji_error}  Vous ne pouvez pas échanger de l’argent avec vous-même. Ce serait inutile.\n"
 												  f"(Vous recherchez peut-être la commande `add-money`.)", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -704,7 +726,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`give <member> <amount or all>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -721,7 +743,7 @@ async def on_message(message):
 					color = discord_error_rgb_code
 					embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`give <member> <amount or all>`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await channel.send(embed=embed)
 					return
 			except:
@@ -730,7 +752,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount or all>`.\n\nUsage:\n`give <member> <amount or all>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -742,7 +764,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{give_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -782,7 +804,7 @@ async def on_message(message):
 						description=f"{emoji_error}  Argument donné non valide `[-cash | -bank | -total]`.\n\nUsage:\n"
 									f"`leaderboard [page] [-cash | -bank | -total]`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await channel.send(embed=embed)
 					return
 		else:
@@ -798,7 +820,7 @@ async def on_message(message):
 						description=f"{emoji_error}  Argument donné non valide `[-cash | -bank | -total]`.\n\nUsage:\n"
 									f"`leaderboard [page] [-cash | -bank | -total]`", color=color)
 					embed.set_author(name=username, icon_url=user_pfp)
-					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await channel.send(embed=embed)
 					return
 			except:
@@ -807,7 +829,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `[-cash | -bank | -total]`.\n\nUsage:\n"
 								f"`leaderboard [page] [-cash | -bank | -total]`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -818,7 +840,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{lb_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -875,7 +897,7 @@ async def on_message(message):
 		embed.add_field(name="Affiche la liste des roles avec salaire", value=f"`+list-roles`", inline=True)
 		embed.add_field(name="Recolter votre salaire", value=f"`+collect`", inline=True)
 		embed.add_field(name="Mettre a jour un salaire", value=f"`+update-income`", inline=True)
-		embed.set_footer(text=f"Pour plus d'infos demandez de l'aide à un membre du staff ou à <@598076783186935808>.\n{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"Pour plus d'infos demandez de l'aide à un membre du staff ou à <@598076783186935808>.\n{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 	# --------------
@@ -889,7 +911,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`module <module>`",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -902,7 +924,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{module_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -914,11 +936,11 @@ async def on_message(message):
 	# --------------
 
 	elif command == "add-money":
-		if not (Gerant in staff_request):
+		if not (Gerant in staff_request or JOs in staff_request):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -926,7 +948,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`add-money <member> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -941,7 +963,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`add-money <member> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -959,14 +981,14 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`add-money <member> <amount>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`add-money <member> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -979,7 +1001,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{add_money_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -995,7 +1017,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1003,7 +1025,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-money <member> <amount> [cash/bank]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1019,7 +1041,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`remove-money <member> <amount> [cash/bank]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1037,14 +1059,14 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`remove-money <member> <amount> [cash/bank]`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`remove-money <member> <amount> [cash/bank]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1057,7 +1079,7 @@ async def on_message(message):
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `[cash/bank]`.\n\nUsage:"
 												  f"\n`remove-money <member> <amount> [cash/bank]`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -1069,7 +1091,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{rm_money_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1085,7 +1107,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1093,7 +1115,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`change <module> <variable> <new value>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1101,7 +1123,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Vous ne pouvez pas changer les noms de module.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1114,7 +1136,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<new value>`.\n\nUsage:\n`change <module> <variable> <new value>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1126,7 +1148,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{edit_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1142,7 +1164,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1150,7 +1172,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`change-currency <new emoji name>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1162,7 +1184,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_edit_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1178,7 +1200,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1188,7 +1210,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage: `set-income-reset <false/true>`",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1198,7 +1220,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage: `set-income-reset <false/true>`",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1211,7 +1233,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{new_income_reset_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1227,7 +1249,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1625,7 +1647,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{create_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1641,7 +1663,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1649,7 +1671,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`delete-item <item short name>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1671,7 +1693,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{remove_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1681,7 +1703,7 @@ async def on_message(message):
 		color = discord.Color.from_rgb(102, 187, 106)
 		embed = discord.Embed(description=f"{emoji_worked}  L’article a été retiré du magasin.\nRemarque : supprime également de l’inventaire de tout le monde.", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		return
@@ -1695,7 +1717,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1703,7 +1725,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-user-item <member> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1718,7 +1740,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`remove-user-item <member> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1726,7 +1748,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-user-item <member> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		item_name = param[2]
@@ -1742,14 +1764,14 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`remove-user-item <member> <item short name> <amount>", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`remove-user-item <member> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1759,7 +1781,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{remove_user_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1776,7 +1798,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1795,7 +1817,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{clean_lb_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -1806,7 +1828,7 @@ async def on_message(message):
 		color = discord.Color.from_rgb(102, 187, 106) 
 		embed = discord.Embed(description=f"{emoji_worked} {clean_lb_return} utilisateur(s) ont été supprimés de la base de données.", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		return
@@ -1820,7 +1842,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error} Trop peu d’arguments donnés.\n\nUsage:\n`buy-item <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		item_name = param[1]
@@ -1836,14 +1858,14 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error} Argument donné non valide `amount`.\n\nUsage:\n`buy-item <item short name> <amount>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error} Argument donné non valide `amount`.\n\nUsage:\n`buy-item <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 	
@@ -1856,7 +1878,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{buy_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 	
@@ -1869,7 +1891,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error} Une erreur inattendue est survenue lors du traitement de l'achat.", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 	
@@ -1879,9 +1901,9 @@ async def on_message(message):
 		
 			if vendeur_mention == "none":
 				color = discord.Color.green()
-				embed = discord.Embed(description=f"{emoji_worked} Achat de **{item_name}** effectué avec succès pour {price * amount} Boukens. Aucun vendeur assigné.", color=color)
+				embed = discord.Embed(description=f"{emoji_worked} Achat de **{item_name}** effectué avec succès pour {price * amount} {nom_monnaie}s. Aucun vendeur assigné.", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 	
@@ -1923,7 +1945,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		"""
@@ -1932,7 +1954,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`give-item <player pinged> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1948,7 +1970,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Vous ne pouvez pas échanger d’objets avec vous-même. Cela serait inutile...", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -1957,7 +1979,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`give-item <player pinged> <item> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1965,7 +1987,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`give-item <player pinged> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		item_name = param[2]
@@ -1982,14 +2004,14 @@ async def on_message(message):
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`give-item <player pinged> <item short "
 												  f"name> <amount>`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`give-item <player pinged> <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -1999,7 +2021,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{give_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2016,7 +2038,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2025,7 +2047,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2042,7 +2064,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<member>`.\n\nUsage:"
 											  f"\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2050,7 +2072,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		item_name = param[2]
@@ -2066,14 +2088,14 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `amount`.\n\nUsage:\n`spawn-item <player pinged> <item short name> [amount]`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2083,7 +2105,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{give_item_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2101,7 +2123,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`use-item <item short name> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		else:
@@ -2119,7 +2141,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Le montant doit être un nombre entier (entier).\n\nUsage:\n`use-item <item short name> <amount>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -2130,7 +2152,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{use_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -2155,7 +2177,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Numéro de page non valide.\n\nUsage:\n`inventory [page]`", color=color)
 				embed.set_footer(text="info : l’utiliser sans page une fois, la sortie montrera le nombre de pages total.\ninfo : utiliser user-inventory pour voir l’inventaire d’un autre utilisateur.")
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -2165,7 +2187,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{inventory_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2184,7 +2206,7 @@ async def on_message(message):
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`user-inventory <member> [page]`", color=color)
 			embed.set_footer(text="info : utilisez ``inventory`` pour voir votre propre inventaire.")
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		else:
@@ -2202,7 +2224,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Ping invalide.\n\nUsage:\n`user-inventory <member> [page]`", color=color)
 				embed.set_footer(text="info : utilisez ``inventory`` pour voir votre propre inventaire.")
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -2218,7 +2240,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Numéro de page non valide.\n\nUsage:\n`user-inventory <member> [page]`", color=color)
 				embed.set_footer(text="info : l’utiliser sans page une fois, la sortie montrera le nombre total de pages")
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 
@@ -2228,7 +2250,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{inventory_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2253,7 +2275,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{catalog_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2271,7 +2293,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 		
@@ -2281,7 +2303,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`add-income-role <role pinged> <income>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2308,14 +2330,14 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`add-income-role <role pinged> <amount>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except:
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`add-income-role <role pinged> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2325,7 +2347,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{create_role_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2342,7 +2364,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2350,7 +2372,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-income-role <role pinged>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2375,7 +2397,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{remove_role_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2385,7 +2407,7 @@ async def on_message(message):
 		color = discord.Color.from_rgb(102, 187, 106) 
 		embed = discord.Embed(description=f"{emoji_worked}  Le rôle n'a pas de salaire.", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		return
@@ -2399,7 +2421,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2409,7 +2431,7 @@ async def on_message(message):
 				description=f"{emoji_error}  Trop peu d’arguments donnés.\n\nUsage:\n`remove-money-role <role pinged> <amount>`",
 				color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2427,7 +2449,7 @@ async def on_message(message):
 					description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`remove-money-role <role pinged> <amount>`",
 					color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except:
@@ -2435,7 +2457,7 @@ async def on_message(message):
 			embed = discord.Embed(
 				description=f"{emoji_error}  Argument donné non valide `<amount>`.\n\nUsage:\n`remove-money-role <role pinged> <amount>`", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2454,7 +2476,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{remove_money_role_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2473,7 +2495,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{list_roles_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2490,7 +2512,7 @@ async def on_message(message):
 			color = discord_error_rgb_code
 			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return
 
@@ -2500,7 +2522,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{update_incomes_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2510,7 +2532,7 @@ async def on_message(message):
 		color = discord.Color.from_rgb(102, 187, 106) 
 		embed = discord.Embed(description=f"{emoji_worked}  Les utilisateurs ayant des rôles enregistrés ont reçu leurs revenus (dans leur compte bancaire).", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		return
@@ -2528,7 +2550,7 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{update_incomes_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
@@ -2549,13 +2571,12 @@ async def on_message(message):
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{economy_stats_return}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 				return
 		except Exception as e:
 			logger.info(e)
 			await send_error(channel)
-			
 			
 		return
 	
@@ -2563,85 +2584,7 @@ async def on_message(message):
 	# START/STOP/MAINTENANCE/POST
 	# ---------------------------
 	
-	elif command in ["start"]:
-		if not (Gerant in staff_request):
-			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
-			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
-			await channel.send(embed=embed)
-			return
-
-		try:
-			channel = bot.get_channel(channelBot)
-			await channel.send(f"-# <@&{ping_annonces_bot}>")
-			embed = discord.Embed(description=f"## {emoji_error}  {nom_bot} part temporairement !",color=discord.Color.red())
-			embed.add_field(name="\n🛠 Statut", value="Hors ligne", inline=True)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
-	
-			await channel.send(embed=embed)
-			logger.info(f"Début de la maintenance.")
-			
-			channel = bot.get_channel(log_channel)
-			await channel.send("Message posté")
-		
-		except Exception as e:
-			logger.info(e)
-			await send_error(channel)
-	
-	elif command in ["stop"]:
-		if not (Gerant in staff_request):
-			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
-			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
-			await channel.send(embed=embed)
-			return
-
-		try:
-			channel = bot.get_channel(channelBot)
-			await channel.send(f"-# <@&{ping_annonces_bot}>")
-			embed = discord.Embed(description=f"## 🎉 {nom_bot} est de retour !", color=discord.Color.green())
-			embed.add_field(name="\n🛠 Statut", value="En ligne", inline=True)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
-	
-			await channel.send(embed=embed)
-			logger.info(f"Fin de la maintenance.")
-			
-			channel = bot.get_channel(log_channel)
-			await channel.send("Message posté")
-		
-		except Exception as e:
-			logger.info(e)
-			await send_error(channel)
-		
-	elif command in ["post"]:
-		if not (Gerant in staff_request):
-			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
-			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
-			await channel.send(embed=embed)
-			return
-
-		try:
-			channel = bot.get_channel(channelBot)
-			await channel.send(f"-# <@&{ping_annonces_bot}>")
-			embed=discord.Embed(description="# Titre du Post", color=discord.Color.blue())
-			embed.add_field(name="", value="**Description du Post.**", inline=False)
-			embed.add_field(name="", value="-# Footer du Post", inline=False)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
-			
-			await channel.send(embed=embed)
-		
-			logger.info(f"Message posté.")
-			
-			channel = bot.get_channel(log_channel)
-			await channel.send("Message posté.")
-		
-		except Exception as e:
-			logger.info(e)
-			await send_error(channel)
+	await handle_command(command, user, username, user_pfp, staff_request, channel, bot, logger)
 	
 	await bot.process_commands(message)
 
