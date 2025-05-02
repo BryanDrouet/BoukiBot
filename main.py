@@ -211,7 +211,7 @@ async def ping(interaction: discord.Interaction):
 async def test(interaction: discord.Interaction):
 	roles = [role.name for role in interaction.user.roles]
 	if f"{Gerant}" not in roles:
-		embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=discord_error_rgb_code)
+		embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=discord_error_rgb_code)
 		await interaction.response.send_message(embed=embed, ephemeral=True)
 		return
 	embed = discord.Embed(description=f"✅ Commande test réussie !", color=discord.Color.green())
@@ -938,7 +938,7 @@ async def on_message(message):
 	elif command == "add-money":
 		if not (Gerant in staff_request or JOs in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -1015,7 +1015,7 @@ async def on_message(message):
 	elif command == "remove-money":
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -1105,7 +1105,7 @@ async def on_message(message):
 	elif command in ["change", "edit"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -1162,7 +1162,7 @@ async def on_message(message):
 	elif command in ["change-currency", "edit_currency"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -1198,7 +1198,7 @@ async def on_message(message):
 	elif command in ["set-income-reset", "change-income-reset"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -1247,7 +1247,7 @@ async def on_message(message):
 	elif command in ["create-item", "new-item", "item-create"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -1661,7 +1661,7 @@ async def on_message(message):
 	elif command in ["delete-item", "remove-item"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -1715,7 +1715,7 @@ async def on_message(message):
 	elif command in ["remove-user-item"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -1796,7 +1796,7 @@ async def on_message(message):
 	elif command in ["clean-leaderboard", "clean-lb"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -1943,7 +1943,7 @@ async def on_message(message):
 		"""
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -2036,7 +2036,7 @@ async def on_message(message):
 	elif command in ["spawn-item"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -2291,7 +2291,7 @@ async def on_message(message):
 	elif command in ["add-income-role", "add-role-income"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -2362,7 +2362,7 @@ async def on_message(message):
 	elif command in ["remove-income-role", "delete-income-role", "remove-role-income", "delete-role-income"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -2419,7 +2419,7 @@ async def on_message(message):
 	elif command in ["remove-money-role", "remove-role-money"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -2510,7 +2510,7 @@ async def on_message(message):
 	elif command in ["update-income"]:
 		if not (Gerant in staff_request):
 			color = discord_error_rgb_code
-			embed = discord.Embed(description=f"🔒 Nécessite le rôle Gérant {nom_bot}", color=color)
+			embed = discord.Embed(description=f"🔒 Nécessite le rôle {Gerant}", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
 			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
@@ -2581,7 +2581,7 @@ async def on_message(message):
 		return
 	
 	# ---------------------------
-	# START/STOP/MAINTENANCE/POST
+	# START/STOP
 	# ---------------------------
 	
 	await handle_command(command, user, username, user_pfp, staff_request, channel, bot, logger)
