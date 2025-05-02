@@ -1,13 +1,32 @@
-import random, discord, datetime, logging, sys
+import random, discord, datetime, sys, os, logging
 from babel.dates import format_datetime
 from config import *
 
+sys.stdout.reconfigure(encoding='utf-8')
 logger = logging.getLogger(f"{nom_bot}")
 logger.setLevel(logging.INFO)
 if not logger.handlers:
 	handler = logging.StreamHandler(sys.stdout)
 	handler.setFormatter(logging.Formatter('%(message)s'))
 	logger.addHandler(handler)
+
+os.makedirs("cache", exist_ok=True)
+log_filename = datetime.now().strftime("cache/logs_%Y-%m-%d_%H-%M-%S.txt")
+file_handler = logging.FileHandler(log_filename, encoding="utf-8")
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(logging.Formatter('%(levelname)s  |  %(asctime)s\n%(message)s\n\n'))
+logger = logging.getLogger(nom_bot)  # ou "discord_bot", selon ton code
+logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
+    logger.addHandler(file_handler)
+discord_logger = logging.getLogger('discord')
+discord_logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in discord_logger.handlers):
+    discord_logger.addHandler(file_handler)
+gateway_logger = logging.getLogger('discord.gateway')
+gateway_logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in gateway_logger.handlers):
+    gateway_logger.addHandler(file_handler)
 
 class Card:
 	def __init__(self, rank, suit):
@@ -91,7 +110,7 @@ class blackjack_discord_implementation:
 					firstEmbed.set_author(name=username, icon_url=user_pfp)
 					firstEmbed.add_field(name="**Votre main**", value=f"X X\nValeur {self.handCount(hand['human'])}", inline=True)
 					firstEmbed.add_field(name="**Le croupier vous montre**", value=f"{str(hand['computer'][-1])}\nValeur ?", inline=True)
-					firstEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					firstEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					sentFirstEmbed = await channel.send(embed=firstEmbed)
 				else:
 					
@@ -100,7 +119,7 @@ class blackjack_discord_implementation:
 					newEmbed.set_author(name=username, icon_url=user_pfp)
 					newEmbed.add_field(name="**Votre main**", value=f"X X\nValeur {self.handCount(hand['human'])}", inline=True)
 					newEmbed.add_field(name="**Le croupier vous montre**", value=f"{str(hand['computer'][-1])}\nValeur ?", inline=True)
-					firstEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+					firstEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 					await sentFirstEmbed.edit(embed=newEmbed)
 
 
@@ -146,7 +165,7 @@ class blackjack_discord_implementation:
 				pcBustedEmbed.set_author(name=username, icon_url=user_pfp)
 				pcBustedEmbed.add_field(name="**Votre main**", value=f"X X\nValeur {self.handCount(hand['human'])}", inline=True)
 				pcBustedEmbed.add_field(name="**Le croupier vous montre**", value=f"X X\nValeur {self.handCount(hand['computer'])}", inline=True)
-				pcBustedEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				pcBustedEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await sentFirstEmbed.edit(embed=pcBustedEmbed)
 
 				return "blackjack"
@@ -157,7 +176,7 @@ class blackjack_discord_implementation:
 				playerBustEmbed.set_author(name=username, icon_url=user_pfp)
 				playerBustEmbed.add_field(name="**Votre main**", value=f"X X\nValeur {self.handCount(hand['human'])}", inline=True)
 				playerBustEmbed.add_field(name="**Le croupier vous montre**", value=f"{str(hand['computer'][-1])}\nValeur ?", inline=True)
-				playerBustEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				playerBustEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await sentFirstEmbed.edit(embed=playerBustEmbed)
 
 				return "loss"
@@ -168,7 +187,7 @@ class blackjack_discord_implementation:
 				pcBustedEmbed.set_author(name=username, icon_url=user_pfp)
 				pcBustedEmbed.add_field(name="**Votre main**", value=f"X X\nValeur {self.handCount(hand['human'])}", inline=True)
 				pcBustedEmbed.add_field(name="**Le croupier vous montre**", value=f"X X\nValeur {self.handCount(hand['computer'])}", inline=True)
-				pcBustedEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				pcBustedEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await sentFirstEmbed.edit(embed=pcBustedEmbed)
 
 				return "win"
@@ -179,7 +198,7 @@ class blackjack_discord_implementation:
 				playerWinEmbed.set_author(name=username, icon_url=user_pfp)
 				playerWinEmbed.add_field(name="**Votre main**", value=f"X X\nValeur {self.handCount(hand['human'])}", inline=True)
 				playerWinEmbed.add_field(name="**Le croupier vous montre**", value=f"X X\nValeur {self.handCount(hand['computer'])}", inline=True)
-				playerWinEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				playerWinEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await sentFirstEmbed.edit(embed=playerWinEmbed)
 
 				return "win"
@@ -190,7 +209,7 @@ class blackjack_discord_implementation:
 				playerWinEmbed.set_author(name=username, icon_url=user_pfp)
 				playerWinEmbed.add_field(name="**Votre main**", value=f"X X\nValeur {self.handCount(hand['human'])}", inline=True)
 				playerWinEmbed.add_field(name="**Le croupier vous montre**", value=f"X X\nValeur {self.handCount(hand['computer'])}", inline=True)
-				playerWinEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				playerWinEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await sentFirstEmbed.edit(embed=playerWinEmbed)
 
 				return "bust"
@@ -201,7 +220,7 @@ class blackjack_discord_implementation:
 				pcWinEmbed.set_author(name=username, icon_url=user_pfp)
 				pcWinEmbed.add_field(name="**Votre main**", value=f"X X\nValeur {self.handCount(hand['human'])}", inline=True)
 				pcWinEmbed.add_field(name="**Le croupier vous montre**", value=f"X X\nValeur {self.handCount(hand['computer'])}", inline=True)
-				pcWinEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				pcWinEmbed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await sentFirstEmbed.edit(embed=pcWinEmbed)
 
 				return "loss"
