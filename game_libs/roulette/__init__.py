@@ -1,13 +1,32 @@
-import random, discord, time, asyncio, datetime, logging, sys
+import random, discord, time, datetime, sys, os ,logging
 from babel.dates import format_datetime
 from config import *
 
+sys.stdout.reconfigure(encoding='utf-8')
 logger = logging.getLogger(f"{nom_bot}")
 logger.setLevel(logging.INFO)
 if not logger.handlers:
 	handler = logging.StreamHandler(sys.stdout)
 	handler.setFormatter(logging.Formatter('%(message)s'))
 	logger.addHandler(handler)
+
+os.makedirs("cache", exist_ok=True)
+log_filename = datetime.now().strftime("cache/logs_%Y-%m-%d_%H-%M-%S.txt")
+file_handler = logging.FileHandler(log_filename, encoding="utf-8")
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(logging.Formatter('%(levelname)s  |  %(asctime)s\n%(message)s\n\n'))
+logger = logging.getLogger(nom_bot)  # ou "discord_bot", selon ton code
+logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
+    logger.addHandler(file_handler)
+discord_logger = logging.getLogger('discord')
+discord_logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in discord_logger.handlers):
+    discord_logger.addHandler(file_handler)
+gateway_logger = logging.getLogger('discord.gateway')
+gateway_logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in gateway_logger.handlers):
+    gateway_logger.addHandler(file_handler)
 
 class roulette_discord_implementation:
     def __init__(self, bot, channel, currency_emoji):
@@ -54,7 +73,7 @@ class roulette_discord_implementation:
         color = discord.Color.from_rgb(3, 169, 244)
         embed = discord.Embed(description=f"Tu mises {str(self.currency_symbol)} {bet} sur `{space}`.", color=color)
         embed.set_author(name=username, icon_url=user_pfp)
-        embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | ÇA TOURNE ! ... Temps restant: 10 secondes", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+        embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | ÇA TOURNE ! ... Temps restant: 10 secondes", icon_url=BOT_ICON)
         await channel.send(embed=embed)
 
         time.sleep(10)
