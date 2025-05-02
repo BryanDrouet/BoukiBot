@@ -14,7 +14,7 @@ if not logger.handlers:
 	logger.addHandler(handler)
 
 os.makedirs("cache", exist_ok=True)
-log_filename = datetime.now().strftime("cache/logs_%Y-%m-%d_%H-%M-%S.txt")
+log_filename = datetime.datetime.now().strftime("cache/logs_%Y-%m-%d_%H-%M-%S.txt")
 file_handler = logging.FileHandler(log_filename, encoding="utf-8")
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(logging.Formatter('%(levelname)s  |  %(asctime)s\n%(message)s\n\n'))
