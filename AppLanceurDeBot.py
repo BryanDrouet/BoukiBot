@@ -493,6 +493,7 @@ class JSONEditorApp(QWidget):
 
     def start_bot(self):
         if hasattr(self, 'bot_file'):
+            self.console_output.setTextColor(QColor("white"))
             self.console_output.clear()
 
             self.bot_process = QProcess(self)
@@ -536,6 +537,7 @@ class JSONEditorApp(QWidget):
     def handle_bot_output(self):
         if self.bot_process:
             output = self.bot_process.readAllStandardOutput().data().decode("utf-8")
+            self.console_output.setTextColor(QColor("white"))
             for line in output.splitlines():  # Assurer une bonne gestion des sauts de ligne
                 self.console_output.append(line)
 
@@ -544,6 +546,7 @@ class JSONEditorApp(QWidget):
             error_output = self.bot_process.readAllStandardError().data().decode("utf-8")
             for line in error_output.splitlines():  # Même traitement pour les erreurs
                 self.console_output.append(f"<span style='color: red;'>{line}</span>")
+            self.console_output.setTextColor(QColor("white"))
 
     def handle_bot_started(self):
         self.status_label.setText("État du Bot : En cours d'exécution")
