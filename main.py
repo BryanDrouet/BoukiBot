@@ -37,38 +37,6 @@ gateway_logger.setLevel(logging.INFO)
 if not any(isinstance(h, logging.FileHandler) for h in gateway_logger.handlers):
     gateway_logger.addHandler(file_handler)
 
-'''
-@bot.tree.command(name="bank-userbalance", description="Affiche le solde du compte bancaire de l'utilisateur")
-async def balance(ctx):
-    await afficher_solde(ctx.message)
-
-@bot.tree.command(name="bank-interests", description="Vérifie si les intérêts ont été versés")
-async def interets(ctx):
-    await check_interets(ctx.message)
-
-@bot.tree.command(name="bank-closeaccount", description="Ferme le compte bancaire de l'utilisateur")
-async def fermer(ctx):
-    await fermer_compte(ctx.message)
-
-@bot.tree.command(name="bank-topaccount", description="Affiche le top 10 des comptes bancaires")
-async def top(ctx):
-    await top_comptes(ctx.message)
-
-@bot.tree.command(name="bank-createbusinessaccount", description="Crée un compte bancaire pour une entreprise")
-async def creer_entreprise_cmd(
-    ctx: discord.Interaction,
-    nom_entreprise: str  # Utilisation d'une option nommée pour le nom de l'entreprise
-):
-    await creer_entreprise(ctx.message, nom_entreprise)
-
-@bot.tree.command(name="bank-balanceusermentioned", description="Affiche le solde bancaire d'un utilisateur mentionné")
-async def solde(
-    ctx: discord.Interaction,
-    mentions: discord.User  # Annotation du type pour le paramètre 'mentions'
-):
-    await afficher_solde(ctx.message)
-'''
-
 def currency_symbol(self, test=False, value="unset", description=""):
 	self.currency_symbol = {monnaie}
 
