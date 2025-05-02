@@ -16,12 +16,6 @@ async def handle_command(command, user, username, user_pfp, staff_request, chann
     elif command in ["stop"]:
         await handle_stop(user, username, user_pfp, staff_request, channel, bot, logger)
 
-    elif command in ["maintenance"]:
-        await handle_maintenance(user, username, user_pfp, staff_request, channel, bot, logger)
-
-    elif command in ["post"]:
-        await handle_post(user, username, user_pfp, staff_request, channel, bot, logger)
-
 
 async def handle_start(user, username, user_pfp, staff_request, channel, bot, logger):
     if not (Gerant in staff_request):
