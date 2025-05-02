@@ -1,4 +1,4 @@
-import discord, json, locale, database, datetime, logging, sys, requests
+import discord, json, locale, database, datetime, logging, sys, requests, os
 from discord.ext.commands import Bot
 from babel.dates import format_datetime
 from datetime import datetime
@@ -17,7 +17,15 @@ discord_error_rgb_code = discord.Color.from_rgb(239, 83, 80)
 intents = discord.Intents.all()
 bot = Bot(command_prefix=BOT_PREFIX, intents=intents)
 db_handler = database.pythonboat_database_handler(bot)
-bot.tree
+
+os.makedirs("cache", exist_ok=True)
+log_filename = datetime.now().strftime("cache/logs_%Y-%m-%d_%H-%M-%S.txt")
+file_handler = logging.FileHandler(log_filename, encoding="utf-8")
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+if not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
+    logger.addHandler(file_handler)
 
 def currency_symbol(self, test=False, value="unset"):
 	self.currency_symbol = {monnaie}
