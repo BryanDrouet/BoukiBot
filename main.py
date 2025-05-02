@@ -24,29 +24,6 @@ file_handler = logging.FileHandler(log_filename, encoding="utf-8")
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
-class DiscordLogHandler(logging.Handler):
-	def __init__(self, bot, channel_id):
-		super().__init__()
-		self.bot = bot
-		self.channel_id = channel_id
-
-	async def send_to_discord(self, message):
-		await self.bot.wait_until_ready()
-		channel = self.bot.get_channel(self.channel_id)
-		if channel:
-			await channel.send(f"📋 `{message}`")
-
-	def emit(self, record):
-		message = self.format(record)
-		asyncio.run_coroutine_threadsafe(self.send_to_discord(message), self.bot.loop)
-
-discord_handler = DiscordLogHandler(bot, log_channel)
-discord_handler.setLevel(logging.INFO)
-discord_handler.setFormatter(logging.Formatter('%(asctime)s - %(message)s'))
-
-if not any(isinstance(h, DiscordLogHandler) for h in logger.handlers):
-	logger.addHandler(discord_handler)
-
 if not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
     logger.addHandler(file_handler)
 
@@ -218,10 +195,6 @@ async def test(interaction: discord.Interaction):
 
 @bot.event
 async def on_message(message):
-	sys.stdout.reconfigure(encoding='utf-8')
-	formatter = logging.Formatter('%(message)s')
-	handler.setFormatter(formatter)
-
 	if message.author.bot:
 		return
 
