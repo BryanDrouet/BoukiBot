@@ -1,6 +1,13 @@
-import random, discord, datetime
+import random, discord, datetime, logging, sys
 from babel.dates import format_datetime
 from config import *
+
+logger = logging.getLogger(f"{nom_bot}")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+	handler = logging.StreamHandler(sys.stdout)
+	handler.setFormatter(logging.Formatter('%(message)s'))
+	logger.addHandler(handler)
 
 class Card:
 	def __init__(self, rank, suit):
