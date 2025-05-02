@@ -1,12 +1,35 @@
-import os, json, random, math, calendar, datetime, discord, asyncio, logging
+import os, json, random, math, calendar, datetime, discord, asyncio, logging, sys
 from datetime import timedelta
 from game_libs.blackjack import blackjack_discord_implementation
 from game_libs.roulette import roulette_discord_implementation
 from babel.dates import format_datetime
 from config import *
 
+sys.stdout.reconfigure(encoding='utf-8')
 logger = logging.getLogger(f"{nom_bot}")
 logger.setLevel(logging.INFO)
+if not logger.handlers:
+	handler = logging.StreamHandler(sys.stdout)
+	handler.setFormatter(logging.Formatter('%(message)s'))
+	logger.addHandler(handler)
+
+os.makedirs("cache", exist_ok=True)
+log_filename = datetime.now().strftime("cache/logs_%Y-%m-%d_%H-%M-%S.txt")
+file_handler = logging.FileHandler(log_filename, encoding="utf-8")
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(logging.Formatter('%(levelname)s  |  %(asctime)s\n%(message)s\n\n'))
+logger = logging.getLogger(nom_bot)  # ou "discord_bot", selon ton code
+logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
+    logger.addHandler(file_handler)
+discord_logger = logging.getLogger('discord')
+discord_logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in discord_logger.handlers):
+    discord_logger.addHandler(file_handler)
+gateway_logger = logging.getLogger('discord.gateway')
+gateway_logger.setLevel(logging.INFO)
+if not any(isinstance(h, logging.FileHandler) for h in gateway_logger.handlers):
+    gateway_logger.addHandler(file_handler)
 
 class pythonboat_database_handler:    
 	def __init__(self, client):
@@ -185,12 +208,12 @@ class pythonboat_database_handler:
 		if bet == "all":
 			bet = user_cash
 			if bet < 100:
-				return "error", f"{emoji_error}  Il vous manque minimum 100 Boukens en cash. Vous avez {str(self.currency_symbol)} {'{:,}'.format(user_cash)} dans votre main."
+				return "error", f"{emoji_error}  Il vous manque minimum 100 {nom_monnaie}s en cash. Vous avez {str(self.currency_symbol)} {'{:,}'.format(user_cash)} dans votre main."
 		else:
 			bet = int(bet)
 		
 		if bet > user_cash:
-			return "erreure", f"{emoji_error}  C'est beau de rever mais il te manque un petit paquet de boukens. Tu n'as que {str(self.currency_symbol)} {'{:,}'.format(user_cash)} en poche."
+			return "erreure", f"{emoji_error}  C'est beau de rever mais il te manque un petit paquet de {nom_monnaie}s. Tu n'as que {str(self.currency_symbol)} {'{:,}'.format(user_cash)} en poche."
 		
 		# the actual game
 		# start it
@@ -235,7 +258,7 @@ class pythonboat_database_handler:
 		if bet == "all":
 			bet = user_cash
 			if bet < 100:
-				return "error", f"{emoji_error}  Il vous faut au minimum 100 Boukens. Vous avez actuellement{str(self.currency_symbol)} {'{:,}'.format(user_cash)} en main"
+				return "error", f"{emoji_error}  Il vous faut au minimum 100 {nom_monnaie}s. Vous avez actuellement{str(self.currency_symbol)} {'{:,}'.format(user_cash)} en main"
 		else:
 			bet = int(bet)
 			
@@ -330,7 +353,7 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱ ️Vous pourrez redevenir une catin dans {delay_remaining}.",color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return "success", "success"
 		# else:
@@ -358,7 +381,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{lose_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(loss))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			json_user_content["cash"] -= loss
 			# update last slut time
@@ -379,7 +402,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			json_user_content["cash"] += gain
 			# update last slut time
@@ -451,7 +474,7 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱ Vous pourrez refaire un crime dans {delay_remaining}.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -466,7 +489,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			json_user_content["cash"] += gain
 		else:
@@ -480,7 +503,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{lose_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(loss))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			json_user_content["cash"] -= loss
 	
@@ -564,7 +587,7 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱️ Vous pourrez faire une nouvelle aventure dans {delay_remaining}.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -584,7 +607,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			json_user_content["cash"] += gain
 			# mise à jour de last_adventure
@@ -607,7 +630,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{lose_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(loss))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			json_user_content["cash"] -= loss
 			# mise à jour de last_adventure
@@ -684,7 +707,7 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱ ️Vous pourrez travailler dans {delay_remaining}.",color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return "success", "success"
 		# else:
@@ -702,7 +725,7 @@ class pythonboat_database_handler:
 		color = self.discord_success_rgb_code
 		embed = discord.Embed(description=f"{win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**",color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 		json_user_content["cash"] += gain
 		# update last slut time
@@ -751,7 +774,7 @@ class pythonboat_database_handler:
 			color = self.discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Vous avez atteint la limite de 3 vols cette semaine.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return "success", "success"
 		
@@ -792,7 +815,7 @@ class pythonboat_database_handler:
 			color = self.discord_blue_rgb_code
 			embed = discord.Embed(description=f"⏱ ️Vous pourrez de nouveau voler quelqu'un dans {delay_remaining}.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -807,7 +830,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(description=f"{emoji_error}  Argument donné non valide  `<user>`.\n\nUsage:\n`rob <user>`",
 								  color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -815,7 +838,7 @@ class pythonboat_database_handler:
 			color = self.discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  Vous ne pouvez pas vous voler vous même !", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -826,7 +849,7 @@ class pythonboat_database_handler:
 			color = self.discord_error_rgb_code
 			embed = discord.Embed(description=f"{emoji_error}  La cible n'a pas d'argent liquide à voler.", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			return "success", "success"
 	
@@ -846,7 +869,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{emoji_error}  {lose_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(loss))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			json_user_content["last_rob"] = str(now)
 			json_content["userdata"][user_index] = json_user_content
@@ -864,7 +887,7 @@ class pythonboat_database_handler:
 			embed = discord.Embed(
 				description=f"{emoji_worked}  {win_phrases} {str(self.currency_symbol)} **{'{:,}'.format(int(gain))}**", color=color)
 			embed.set_author(name=username, icon_url=user_pfp)
-			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+			embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 			await channel.send(embed=embed)
 			json_user_content["cash"] += gain
 			robbed_user_data["cash"] -= gain
@@ -908,7 +931,7 @@ class pythonboat_database_handler:
 		embed.add_field(name="**Banque**", value=f"{str(self.currency_symbol)} {check_bank}", inline=True)
 		embed.add_field(name="**Total**", value=f"{str(self.currency_symbol)} {check_bal}", inline=True)
 		embed.set_author(name=username_to_check, icon_url=userpfp_to_check)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		self.overwrite_json(json_content)
@@ -951,7 +974,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez déposé {str(self.currency_symbol)} {'{:,}'.format(int(amount))} dans votre banque !",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -990,7 +1013,7 @@ class pythonboat_database_handler:
 	
 		# Vérifier si l'utilisateur a le rôle "M・Mafieux" et multiplier la limite par 3
 		if Mafieux in [role.name for role in member.roles]:
-			DAILY_WITHDRAW_LIMIT *= 3
+			DAILY_WITHDRAW_LIMIT *= 3  # Multiplie la limite par 3
 		
 		if Banque in [role.name for role in member.roles]:
 			DAILY_WITHDRAW_LIMIT *= 6
@@ -1036,7 +1059,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked} Vous avez retiré {str(self.currency_symbol)} {'{:,}'.format(amount)} de votre banque !",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 	
 		# Sauvegarder les données
@@ -1083,7 +1106,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  {recept_uname.mention} a reçu {str(self.currency_symbol)} {'{:,}'.format(int(amount))}",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1291,7 +1314,7 @@ class pythonboat_database_handler:
 			pos_name = "rd"
 		else:
 			pos_name = ""
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | Page {page_number}/{page_count}  •  Votre place : {user_lb_position}{pos_name}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | Page {page_number}/{page_count}  •  Votre place : {user_lb_position}{pos_name}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		return "success", "success"
@@ -1366,7 +1389,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez ajouté {str(self.currency_symbol)} {'{:,}'.format(int(amount))} a la banque de {recept_uname.mention}",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1398,7 +1421,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez retirés {str(self.currency_symbol)} {'{:,}'.format(int(amount))} de la balance de {recept_uname.mention} {mode}",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1436,7 +1459,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Variable '{variable_name}' modifiée dans '{module_name}'\nAvant: '{old_value}'. Après: {new_value}",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1470,7 +1493,7 @@ class pythonboat_database_handler:
 		color = self.discord_success_rgb_code
 		embed = discord.Embed(description=f"{emoji_worked}  Emoji modifié de '{old_value}' à '{new_emoji_name}'", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1500,7 +1523,7 @@ class pythonboat_database_handler:
 		color = self.discord_success_rgb_code
 		embed = discord.Embed(description=f"{emoji_worked}  Revenu réinitialisé à　`{new_income_reset}`", color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | info : si vrai (par défaut), le salaire quotidien est réinitialisé tous les jours et ne s’accumule pas.", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | info : si vrai (par défaut), le salaire quotidien est réinitialisé tous les jours et ne s’accumule pas.", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1649,7 +1672,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez retiré {'{:,}'.format(int(amount_removed))} {item_name} de {recept_uname.mention}.",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1830,7 +1853,7 @@ class pythonboat_database_handler:
 			description=f"Vous avez acheté {amount} {item_display_name} pour {str(self.currency_symbol)} **{'{:,}'.format(int(sum_price))}**",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | {reply_message}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | {reply_message}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1908,7 +1931,7 @@ class pythonboat_database_handler:
 				description=f"{emoji_worked}  {recept_uname.mention} a reçu {'{:,}'.format(int(amount))} {item_name}!",
 				color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -1977,7 +2000,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez utilisés {'{:,}'.format(int(amount))} {item_name} !",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2064,7 +2087,7 @@ class pythonboat_database_handler:
 			page_number = 1
 
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | Page {page_number} sur {page_count}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | Page {page_number} sur {page_count}", icon_url=BOT_ICON)
 		sent_embed = await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2247,7 +2270,7 @@ class pythonboat_database_handler:
 					return "success", "success"
 
 				# embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | AVERTISSEMENT : l’URL pour l'image n’a pas été trouvée. Celle-ci pourrait être déplacée\nVeuillez consulter le fichier json manuellement ou demandez de l'aide à un membre du staff ou à @Bryan_Drouet.", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584") if img_prob else embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | Info : toujours utiliser le nom court pour les commandes.", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | AVERTISSEMENT : l’URL pour l'image n’a pas été trouvée. Celle-ci pourrait être déplacée\nVeuillez consulter le fichier json manuellement ou demandez de l'aide à un membre du staff ou à @Bryan_Drouet.", icon_url=BOT_ICON) if img_prob else embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')} | Info : toujours utiliser le nom court pour les commandes.", icon_url=BOT_ICON)
 				sent_embed = await channel.send(embed=embed)
 				return "success", "success"
 		for i in range(len(catalog_final)):
@@ -2286,7 +2309,7 @@ class pythonboat_database_handler:
 			description=f"Rôle a salaire ajouté\nrole_id : {income_role_id}, salaire : {str(self.currency_symbol)} **{'{:,}'.format(int(income))}**",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2515,12 +2538,12 @@ class pythonboat_database_handler:
 				role_names = "\n- **" + "**\n- **".join([role.name for role in roles_received]) + "**"
 				embed = discord.Embed(description=f"Vous avez reçu votre salaire de {self.currency_symbol} **{'{:,}'.format(int(income_total))}** de {received_instances} rôles différents :{role_names}", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 			else:
 				embed = discord.Embed(description=f"**Vous avez déjà récolté votre salaire !**\nReset dans : **{hours_remaining}.**", color=color)
 				embed.set_author(name=username, icon_url=user_pfp)
-				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+				embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 				await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2566,7 +2589,7 @@ class pythonboat_database_handler:
 			description=f"{emoji_worked}  Vous avez retiré {self.currency_symbol} {'{:,}'.format(int(amount_removed))} d'un total de {'{:,}'.format(int(len(role.members)))} utilisateurs ayant ce rôle !",
 			color=color)
 		embed.set_author(name=username, icon_url=user_pfp)
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		# overwrite, end
@@ -2599,7 +2622,7 @@ class pythonboat_database_handler:
 		embed.add_field(name=f"**Total en banque**", value=f"{self.currency_symbol} {'{:,}'.format(int(total_bank))}", inline=False)
 		embed.add_field(name=f"**Total**", value=f"{self.currency_symbol} {'{:,}'.format(int(total_total))}", inline=False)
 		embed.set_author(name="Statistiques économiques", icon_url="https://upload.wikimedia.org/wikipedia/commons/5/5e/Map_symbol_museum_02.png")
-		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url="https://media.discordapp.net/attachments/707868018708840508/1318353739559469207/883486e0d1166d661ba2d179d0e90f99.png?ex=67620419&is=6760b299&hm=745dd8b6dab2c994d24c4a8042e12318aea7a3e94db6a956be81e16394f01249&=&format=webp&quality=lossless&width=584&height=584")
+		embed.set_footer(text=f"{nom_bot} | {format_datetime(datetime.datetime.now(), format='d MMMM y à HH:mm', locale='fr_FR')}", icon_url=BOT_ICON)
 		await channel.send(embed=embed)
 
 		return "success", "success"
