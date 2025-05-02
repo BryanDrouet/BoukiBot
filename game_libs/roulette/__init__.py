@@ -1,6 +1,13 @@
-import random, discord, time, asyncio, datetime
+import random, discord, time, asyncio, datetime, logging, sys
 from babel.dates import format_datetime
 from config import *
+
+logger = logging.getLogger(f"{nom_bot}")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+	handler = logging.StreamHandler(sys.stdout)
+	handler.setFormatter(logging.Formatter('%(message)s'))
+	logger.addHandler(handler)
 
 class roulette_discord_implementation:
     def __init__(self, bot, channel, currency_emoji):
