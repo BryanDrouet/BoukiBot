@@ -24,6 +24,9 @@ nom_bot = "Bot Personnalisé"
 # <:Bouken:1318277611612278794>
 monnaie = "🪙"
 
+"""Nom de la monnaie du Bot"""
+nom_monnaie = "Pièces"
+
 """Id du role de ping annonces du Bot"""
 ping_annonces_bot = 102347612345678901
 
