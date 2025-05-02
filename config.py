@@ -52,3 +52,6 @@ channelBot = 102347612345678901
 """Id du channel de logs du Bot"""
 # Exemple fictif
 log_channel = 102347612345678901
+
+"""Lien de l'image de la photo de profil de votre Bot"""
+BOT_ICON = "https://media.discordapp.net/"
